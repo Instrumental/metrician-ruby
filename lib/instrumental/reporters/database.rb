@@ -35,7 +35,7 @@ module Instrumental
         log_without_instrumental(*args, &block)
       ensure
         duration = Time.now.to_f - start_time
-        metrics.each{ |m| I.gauge(m, duration) }
+        metrics.each{ |m| InstrumentalReporters.agent.gauge(m, duration) }
       end
     end
 
@@ -73,11 +73,11 @@ module Instrumental
       end
     end
 
-    def self.dotify(klass)
+    def dotify(klass)
       klass.to_s.underscore.gsub(/\//, '.')
     end
 
-    def self.instrumentable_for_table_name(table_name)
+    def instrumentable_for_table_name(table_name)
       @table_name_to_model ||= { }
       klass_name = @table_name_to_model[table_name] ||=
         (ActiveRecord::Base.descendants.detect{|k| k.table_name == table_name}.try(:name) || table_name)
