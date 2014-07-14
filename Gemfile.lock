@@ -1,0 +1,16 @@
+PATH
+  remote: .
+  specs:
+    instrumental_rails (1.0.0)
+      instrumental_agent
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    instrumental_agent (0.12.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  instrumental_rails!
