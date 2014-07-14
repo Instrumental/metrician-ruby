@@ -16,4 +16,8 @@ module InstrumentalReporters
 
   def self.agent; @agent; end
 
+  def self.dotify(klass)
+    klass.to_s.underscore.gsub(/\//, '.')
+  end
+
 end

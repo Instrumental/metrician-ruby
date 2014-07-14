@@ -27,6 +27,7 @@ end
 
 require 'instrumental/reporters/database'
 require 'instrumental/reporters/delayed_job'
+require 'instrumental/reporters/honeybadger'
 require 'instrumental/reporters/memcache'
 require 'instrumental/reporters/method_tracer'
 require 'instrumental/reporters/redis'

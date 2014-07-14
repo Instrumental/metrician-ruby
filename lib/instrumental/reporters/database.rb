@@ -53,7 +53,7 @@ module Instrumental
                       operation
                     end
                   end
-        return "active_record.#{dotify(model)}.#{op_name}" if op_name
+        return "active_record.#{InstrumentalReporters.dotify(model)}.#{op_name}" if op_name
       end
 
       if sql =~ /^INSERT INTO `([a-z_]+)` /
@@ -73,15 +73,11 @@ module Instrumental
       end
     end
 
-    def dotify(klass)
-      klass.to_s.underscore.gsub(/\//, '.')
-    end
-
     def instrumentable_for_table_name(table_name)
       @table_name_to_model ||= { }
       klass_name = @table_name_to_model[table_name] ||=
         (ActiveRecord::Base.descendants.detect{|k| k.table_name == table_name}.try(:name) || table_name)
-      dotify(klass_name)
+      InstrumentalReporters.dotify(klass_name)
     end
   end
 end
