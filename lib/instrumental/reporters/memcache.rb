@@ -10,7 +10,7 @@ module Instrumental
       !!defined?(::Dalli)
     end
 
-    def self.client_class
+    def client_class
       if self.class.memcached_gem?
         Memcached
       elsif self.class.dalli_gem?
