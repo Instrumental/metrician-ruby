@@ -1,11 +1,17 @@
+require 'set'
+
 module Instrumental
   class Reporter
 
     def self.all
-      constants.map    { |class_sym| const_get(class_sym) }
-               .select { |klass|     klass.is_a?(Instrumental::Reporter) }
-               .select (&:enabled?)
-               .map    (&:new)
+      reporters.select(&:enabled?).map(&:new)
+    end
+
+    def self.reporters; @reporters; end
+
+    def self.inherited(subclass)
+      @reporters ||= Set.new
+      @reporters  << subclass
     end
 
     def self.enabled?

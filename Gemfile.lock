@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    instrumental_rails (1.0.0)
+    instrumental_reporters (0.0.1)
       instrumental_agent
 
 GEM
@@ -13,4 +13,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  instrumental_rails!
+  instrumental_reporters!

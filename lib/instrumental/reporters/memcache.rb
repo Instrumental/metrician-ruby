@@ -3,11 +3,11 @@ module Instrumental
     METHODS = [:get, :delete, :cas, :prepend, :append, :replace, :decrement, :increment, :add, :set]
 
     def self.memcached_gem?
-      defined?(::Memcached)
+      !!defined?(::Memcached)
     end
 
     def self.dalli_gem?
-      defined?(::Dalli)
+      !!defined?(::Dalli)
     end
 
     def self.client_class
@@ -32,7 +32,7 @@ module Instrumental
             begin
               #{method_name}_without_instrumental_trace(*args, &blk)
             ensure
-              InstrumentalRails.agent.gauge("memcache.#{method_name}", (Time.now - start_time).to_f)
+              InstrumentalReporters.agent.gauge("memcache.#{method_name}", (Time.now - start_time).to_f)
             end
           end
           alias #{method_name}_without_instrumental_trace #{method_name}

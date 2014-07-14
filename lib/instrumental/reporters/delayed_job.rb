@@ -2,7 +2,7 @@ module Instrumental
 
   class DelayedJob < Reporter
     def self.enabled?
-      defined?(::Delayed::Worker)
+      !!defined?(::Delayed::Worker)
     end
 
     def instrument

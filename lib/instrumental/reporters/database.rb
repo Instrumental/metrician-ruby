@@ -2,7 +2,7 @@ module Instrumental
   class Database < Reporter
 
     def self.enabled?
-      defined?(ActiveRecord)
+      !!defined?(ActiveRecord)
     end
 
     def instrument

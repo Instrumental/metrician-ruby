@@ -1,14 +1,14 @@
 $:.push File.expand_path("../lib", __FILE__)
-require "instrumental_rails/version"
+require "instrumental_reporters/version"
 
 Gem::Specification.new do |s|
-  s.name        = "instrumental_rails"
-  s.version     = InstrumentalRails::VERSION
+  s.name        = "instrumental_reporters"
+  s.version     = InstrumentalReporters::VERSION
   s.authors     = ["Expected Behavior"]
   s.email       = ["support@instrumentalapp.com"]
-  s.homepage    = "TODO"
-  s.summary     = %q{TODO}
-  s.description = %q{TODO}
+  s.homepage    = "http://instrumentalapp.com/"
+  s.summary     = %q{A summary}
+  s.description = %q{A description}
   s.license     = "MIT"
 
 
