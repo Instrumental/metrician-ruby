@@ -1,5 +1,5 @@
 module Instrumental
-  class Honeybadger
+  class Honeybadger < Reporter
 
     def self.enabled?
       !!defined?(::Honeybadger)
