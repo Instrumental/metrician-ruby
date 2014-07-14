@@ -46,16 +46,16 @@ module Instrumental
     end
 
     def add_instrumental_method_tracer(method_name, metric_name = nil)
-      return false unless MethodTracer.traceable_method?(self, method_name)
+      return false unless TracingMethodInterceptor.traceable_method?(self, method_name)
 
       is_klass_method = methods.include?(method_name.to_s)
       traced_name = "with_instrumental_trace_#{method_name}"
-      return false if MethodTracer.already_traced_method?(self, is_klass_method, traced_name)
+      return false if TracingMethodInterceptor.already_traced_method?(self, is_klass_method, traced_name)
 
-      metric_name ||= MethodTracer.default_metric_name(self, is_klass_method, method_name)
+      metric_name ||= TracingMethodInterceptor.default_metric_name(self, is_klass_method, method_name)
       untraced_name = "without_instrumental_trace_#{method_name}"
 
-      traced_method_code = MethodTracer.code_to_eval(is_klass_method, method_name, traced_name,
+      traced_method_code = TracingMethodInterceptor.code_to_eval(is_klass_method, method_name, traced_name,
                                                      untraced_name, metric_name)
       class_eval(traced_method_code, __FILE__, __LINE__)
     end
