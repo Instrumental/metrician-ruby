@@ -26,6 +26,8 @@ We can do some neat stuff automatically in a rails app using the power of rack m
 * content length
 * web server queue time (for servers that set HTTP_X_QUEUE_START like nginx)
 
+By default the middleware will be inserted into your stack automatically. If you control your middleware stack manually, you can load the functionality using the following manual instructions:
+
 We need to load some middleware in a specific way. In your application.rb file:
 
 ```ruby
