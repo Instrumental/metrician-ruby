@@ -1,7 +1,7 @@
 require 'instrumental/reporter'
 require 'instrumental_agent'
 
-require 'instrumental_rails/railtie' if defined?(Rails)
+require 'instrumental_reporters/railtie' if defined?(Rails)
 
 module InstrumentalReporters
 
