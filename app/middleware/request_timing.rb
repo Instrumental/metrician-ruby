@@ -35,7 +35,9 @@ class RequestTiming
       env["REQUEST_TOTAL_TIME"] = nil
       gauge("request", request_time, current_route)
 
-      gauge("response_size", response_size.to_i, current_route) unless response_size.strip.empty?
+      if response_size && !response_size.strip.empty?
+        gauge("response_size", response_size.to_i, current_route)
+      end
 
       middleware_time = (Time.now.to_f - process_start_time) - request_time
       gauge("middleware", middleware_time, current_route)
