@@ -5,8 +5,8 @@ module InstrumentalReporters
       require 'middleware/request_timing'
       require 'middleware/application_timing'
 
-      app.middleware.insert_before("ActionDispatch::Static", "RequestTiming")
-      app.middleware.insert_before("ActionDispatch::Static", "Rack::ContentLength")
+      app.middleware.insert_before(0, "RequestTiming")
+      app.middleware.insert_after("RequestTiming", "Rack::ContentLength")
       app.middleware.use("ApplicationTiming")
     end
 
