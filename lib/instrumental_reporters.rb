@@ -16,7 +16,13 @@ module InstrumentalReporters
     @agent = instrumental_agent
   end
 
-  def self.agent; @agent; end
+  def self.agent
+    @agent || null_agent
+  end
+
+  def self.null_agent
+    @null_agent ||= Instrumental::Agent.new(nil, :enabled => false)
+  end
 
   def self.dotify(klass)
     klass.to_s.underscore.gsub(/\//, '.')
