@@ -62,6 +62,8 @@ module Instrumental
         "active_record.#{instrumentable_for_table_name($1)}.update"
       elsif sql =~ /^DELETE FROM `([a-z_]+)` /
         "active_record.#{instrumentable_for_table_name($1)}.destroy"
+      elsif sql =~ /^SELECT .+ FROM `([a-z_]+)` /
+        "active_record.#{instrumentable_for_table_name($1)}.find"
       end
     end
 
