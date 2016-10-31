@@ -42,7 +42,7 @@ config.middleware.insert_before("ActionDispatch::Static", "Rack::ContentLength")
 config.middleware.use("ApplicationTiming")
 ```
 
-If you run rake middleware, you should see something like:
+If you run `rake middleware`, you should see something like:
 
 ```shell
 use RequestTiming
