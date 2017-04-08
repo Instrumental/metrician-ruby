@@ -7,7 +7,7 @@ module Instrumental
 
     def instrument
       require 'delayed_job/instrumental_job_wrapper'
-      ::Delayed::Worker.plugins << InstrumentalJobWrapper
+      ::Delayed::Worker.plugins << ::Instrumental::DelayedJobCallbacks
     end
   end
 
