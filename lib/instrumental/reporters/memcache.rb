@@ -1,6 +1,7 @@
 module Instrumental
   class Memcache < Reporter
-    METHODS = [:get, :delete, :cas, :prepend, :append, :replace, :decrement, :increment, :add, :set]
+
+    METHODS = %i[get delete cas prepend append replace decrement increment add set].freeze
 
     def self.memcached_gem?
       !!defined?(::Memcached)
@@ -40,5 +41,6 @@ module Instrumental
         EOD
       end
     end
+
   end
 end

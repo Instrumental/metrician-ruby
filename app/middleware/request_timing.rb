@@ -15,9 +15,8 @@ class RequestTiming
     process_start_time = Time.now.to_f
     response_size = 0
 
-    if queue_start_time = self.class.extract_request_start_time(env)
-      gauge("queue_time", process_start_time - queue_start_time)
-    end
+    queue_start_time = self.class.extract_request_start_time(env)
+    gauge("queue_time", process_start_time - queue_start_time) if queue_start_time
 
     if @request_end_time
       gauge("idle", process_start_time - @request_end_time)
@@ -46,7 +45,7 @@ class RequestTiming
     end
   end
 
-  def gauge(kind, size, route=nil)
+  def gauge(kind, size, route = nil)
     InstrumentalReporters.agent.gauge("web.#{kind}", size)
     InstrumentalReporters.agent.gauge("web.#{kind}.#{route}", size) if route
   end
@@ -63,4 +62,5 @@ class RequestTiming
     method_name     = controller.request.request_method.to_s
     "#{controller_name}.#{action_name}.#{method_name}".downcase
   end
+
 end

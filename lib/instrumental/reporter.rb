@@ -1,4 +1,4 @@
-require 'set'
+require "set"
 
 module Instrumental
   class Reporter
@@ -7,11 +7,15 @@ module Instrumental
       reporters.select(&:enabled?).map(&:new)
     end
 
-    def self.reporters; @reporters; end
+    class << self
+
+      attr_reader :reporters
+
+    end
 
     def self.inherited(subclass)
       @reporters ||= Set.new
-      @reporters  << subclass
+      @reporters << subclass
     end
 
     def self.enabled?
@@ -25,9 +29,9 @@ module Instrumental
   end
 end
 
-require 'instrumental/reporters/database'
-require 'instrumental/reporters/delayed_job'
-require 'instrumental/reporters/honeybadger'
-require 'instrumental/reporters/memcache'
-require 'instrumental/reporters/method_tracer'
-require 'instrumental/reporters/redis'
+require "instrumental/reporters/database"
+require "instrumental/reporters/delayed_job"
+require "instrumental/reporters/honeybadger"
+require "instrumental/reporters/memcache"
+require "instrumental/reporters/method_tracer"
+require "instrumental/reporters/redis"

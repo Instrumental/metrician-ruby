@@ -1,0 +1,81 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - vendor/**/*
+    - gemfiles/**/*
+
+
+################
+# Code Metrics #
+################
+Metrics/BlockLength:
+  Exclude:
+    - 'test/schema.rb'
+    - '*.gemspec'
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/LineLength:
+  Max: 140
+
+Metrics/MethodLength:
+  Max: 10
+  CountComments: false
+
+
+###############
+# Style Rules #
+###############
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+# ¯\_(ツ)_/¯
+# ʕノ•ᴥ•ʔノ ︵ ┻━┻
+# ( ͡° ͜ʖ ͡°)
+Style/AsciiComments:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines_except_namespace
+
+Style/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines_except_namespace
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+# TODO: replace the [] below with default once a new version of
+#       rubocop comes out, since there is a PR for it:
+#       https://github.com/bbatsov/rubocop/pull/4038
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%':  '{}'
+    '%i': '[]'
+    '%I': '[]'
+    '%q': '{}'
+    '%Q': '{}'
+    '%r': '{}'
+    '%s': '[]'
+    '%w': '[]'
+    '%W': '[]'
+    '%x': '[]'
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: space
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
