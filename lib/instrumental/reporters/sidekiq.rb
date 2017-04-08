@@ -5,10 +5,10 @@ module Instrumental
     end
 
     def instrument
-      require "sidekiq/instrumental_job_wrapper"
+      require "sidekiq/sidekiq_middleware"
       Sidekiq.configure_server do |config|
         config.server_middleware do |chain|
-          chain.insert_before Sidekiq::Middleware::Server::Logging, Instrumental::SidekiqMiddleware
+          chain.add Sidekiq::Middleware::Server::Logging, Instrumental::SidekiqMiddleware
         end
       end
     end
