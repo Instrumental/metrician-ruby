@@ -6,18 +6,15 @@ module Instrumental
     end
 
     def instrument
-      ::Honeybadger.class_eval do
-        class << self
-
-          def notify_with_instrumental(exception, options = {})
-            notify_without_instrumental(exception, options)
-          ensure
-            InstrumentalReporters.agent.increment("exception")
-            InstrumentalReporters.agent.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
-          end
-          alias_method_chain :notify, :instrumental
-
+      ::Honeybadger::Agent.class_eval do
+        def notify_with_instrumental(exception, options = {})
+          notify_without_instrumental(exception, options)
+        ensure
+          InstrumentalReporters.agent.increment("exception")
+          InstrumentalReporters.agent.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
         end
+        alias_method_chain :notify, :instrumental
+
       end
     end
   end
