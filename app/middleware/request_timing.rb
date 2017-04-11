@@ -40,7 +40,7 @@ class RequestTiming
       end
 
       middleware_time = (Time.now.to_f - process_start_time) - request_time
-      gauge("middleware", middleware_time, current_route)
+      gauge("middleware", middleware_time)
 
       @request_end_time = Time.now.to_f
     end
