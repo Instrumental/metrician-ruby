@@ -29,12 +29,17 @@ class RequestTiming
       response_size = headers["Content-Length"]
       [status, headers, body]
     ensure
-      current_route = self.class.extract_route(env["action_controller.instance"])
+      current_route = self.class.extract_route(
+        controller: env["action_controller.instance"],
+        path: env["REQUEST_PATH"]
+      )
 
       request_time = env["REQUEST_TOTAL_TIME"].to_f
       env["REQUEST_TOTAL_TIME"] = nil
       gauge("request", request_time, current_route)
 
+      # Note that 30xs don't have content-length, so cached
+      # items will report other metrics but not this one
       if response_size && !response_size.strip.empty?
         gauge("response_size", response_size.to_i, current_route)
       end
@@ -56,8 +61,11 @@ class RequestTiming
     result > 1_000_000_000 ? result : nil
   end
 
-  def self.extract_route(controller)
-    return "unknown_endpoint" unless controller
+  def self.extract_route(controller:, path:)
+    if ! controller
+      return "assets" if path =~ /\A\/{0,2}\/assets/
+      return "unknown_endpoint"
+    end
     controller_name = InstrumentalReporters.dotify(controller.class)
     action_name     = controller.action_name.blank? ? "unknown_action" : controller.action_name
     method_name     = controller.request.request_method.to_s
