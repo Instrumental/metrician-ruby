@@ -41,7 +41,7 @@ class RequestTiming
 
       # Note that 30xs don't have content-length, so cached
       # items will report other metrics but not this one
-      if response_size && !response_size.strip.empty?
+      if response_size && !response_size.to_s.strip.empty?
         gauge("response_size", response_size.to_i, current_route)
       end
 
@@ -75,7 +75,7 @@ class RequestTiming
 
   def self.get_response_size(headers:, body:)
     return headers["Content-Length"] if headers["Content-Length"]
-    if body.length == 1
+    if body.respond_to?(:length) && body.length == 1
       body.first.length.to_s
     end
   end
