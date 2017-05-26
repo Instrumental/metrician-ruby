@@ -37,7 +37,7 @@ module InstrumentalReporters
   end
 
   def self.prefixed?
-    @prefixed ||= prefix.empty?
+    @prefixed ||= !prefix.empty?
   end
 
   def self.increment(metrics, value)
