@@ -28,4 +28,15 @@ module InstrumentalReporters
     klass.to_s.underscore.gsub(/\//, '.')
   end
 
+  def self.prefix=(prefix)
+    @prefix = prefix.to_s[-1] == "." ? prefix.to_s : "#{prefix}."
+  end
+
+  def self.prefix
+    @prefix || ""
+  end
+
+  def self.prefixed?
+    @prefixed ||= prefix.empty?
+  end
 end
