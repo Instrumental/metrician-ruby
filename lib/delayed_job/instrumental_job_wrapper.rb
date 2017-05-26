@@ -7,20 +7,20 @@ class InstrumentalJobWrapper < ::Delayed::Plugin
         block.call(job)
       ensure
         duration = Time.now - start
-        InstrumentalReporters.agent.gauge(job_metric_instrumentation_name(job), duration)
+        InstrumentalReporters.gauge(job_metric_instrumentation_name(job), duration)
       end
     end
 
     lifecycle.after(:invoke_job) do |job|
-      InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.success")
+      InstrumentalReporters.increment("#{job_metric_instrumentation_name(job)}.success")
     end
 
     lifecycle.after(:failure) do |job|
-      InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.fail")
+      InstrumentalReporters.increment("#{job_metric_instrumentation_name(job)}.fail")
     end
 
     lifecycle.after(:error) do |job|
-      InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.error")
+      InstrumentalReporters.increment("#{job_metric_instrumentation_name(job)}.error")
     end
   end
 

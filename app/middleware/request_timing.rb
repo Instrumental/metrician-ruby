@@ -52,8 +52,8 @@ class RequestTiming
   end
 
   def gauge(kind, size, route=nil)
-    InstrumentalReporters.agent.gauge("web.#{kind}", size)
-    InstrumentalReporters.agent.gauge("web.#{kind}.#{route}", size) if route
+    InstrumentalReporters.gauge("web.#{kind}", size)
+    InstrumentalReporters.gauge("web.#{kind}.#{route}", size) if route
   end
 
   def self.extract_request_start_time(env)
