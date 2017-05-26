@@ -24,6 +24,10 @@ module InstrumentalReporters
     @null_agent ||= Instrumental::Agent.new(nil, :enabled => false)
   end
 
+  def self.logger=(logger)
+    agent.logger = logger
+  end
+
   def self.dotify(klass)
     klass.to_s.underscore.gsub(/\//, '.')
   end
