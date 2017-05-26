@@ -1,3 +1,5 @@
+require "pry"
+
 # RequestTiming and ApplicationTiming work in concert to time the middleware
 # separate from the request processing. RequestTiming should be the first
 # or near first middleware loaded since it will be timing from the moment
@@ -26,14 +28,13 @@ class RequestTiming
 
     begin
       status, headers, body = @app.call(env)
-      response_size = headers["Content-Length"]
+      response_size = self.class.get_response_size(headers: headers, body: body)
       [status, headers, body]
     ensure
       current_route = self.class.extract_route(
         controller: env["action_controller.instance"],
         path: env["REQUEST_PATH"]
       )
-
       request_time = env["REQUEST_TOTAL_TIME"].to_f
       env["REQUEST_TOTAL_TIME"] = nil
       gauge("request", request_time, current_route)
@@ -70,5 +71,12 @@ class RequestTiming
     action_name     = controller.action_name.blank? ? "unknown_action" : controller.action_name
     method_name     = controller.request.request_method.to_s
     "#{controller_name}.#{action_name}.#{method_name}".downcase
+  end
+
+  def self.get_response_size(headers:, body:)
+    return headers["Content-Length"] if headers["Content-Length"]
+    if body.length == 1
+      body.first.length.to_s
+    end
   end
 end
