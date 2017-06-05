@@ -1,16 +1,18 @@
 module Instrumental
 
   module ResquePlugin
-    def around_perform_with_instrumental(*args)
+
+    def around_perform_with_instrumental(*_args)
       start = Time.now
       yield
-      InstrumentalReporters.agent.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.success")
+      InstrumentalReporters.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.success")
     ensure
-      InstrumentalReporters.agent.gauge(Instrumental::ResqueHelper.job_metric_instrumentation_name(self))
+      duration = Time.now - start
+      InstrumentalReporters.gauge(Instrumental::ResqueHelper.job_metric_instrumentation_name(self), duration)
     end
 
-    def on_failure_with_instrumental(e, *args)
-      InstrumentalReporters.agent.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.error")
+    def on_failure_with_instrumental(_e, *_args)
+      InstrumentalReporters.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.error")
     end
 
   end

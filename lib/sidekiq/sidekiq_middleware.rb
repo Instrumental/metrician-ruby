@@ -5,13 +5,13 @@ module Instrumental
     def call(worker, _msg, _queue)
       start = Time.now
       yield
-      InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(worker)}.success")
+      InstrumentalReporters.increment("#{job_metric_instrumentation_name(worker)}.success")
     rescue
-      InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(worker)}.error")
+      InstrumentalReporters.increment("#{job_metric_instrumentation_name(worker)}.error")
       raise
     ensure
       duration = Time.now - start
-      InstrumentalReporters.agent.gauge(job_metric_instrumentation_name(worker), duration)
+      InstrumentalReporters.gauge(job_metric_instrumentation_name(worker), duration)
     end
 
   end
