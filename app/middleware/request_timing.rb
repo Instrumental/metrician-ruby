@@ -1,5 +1,3 @@
-require "pry"
-
 # RequestTiming and ApplicationTiming work in concert to time the middleware
 # separate from the request processing. RequestTiming should be the first
 # or near first middleware loaded since it will be timing from the moment
