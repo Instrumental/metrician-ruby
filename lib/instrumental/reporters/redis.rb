@@ -21,5 +21,6 @@ module Instrumental
         alias_method :call, :call_with_instrumental_trace
       end
     end
+
   end
 end

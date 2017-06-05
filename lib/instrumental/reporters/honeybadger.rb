@@ -14,8 +14,8 @@ module Instrumental
           InstrumentalReporters.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
         end
         alias_method_chain :notify, :instrumental
-
       end
     end
+
   end
 end

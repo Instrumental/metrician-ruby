@@ -15,9 +15,8 @@ class RequestTiming
     process_start_time = Time.now.to_f
     response_size = 0
 
-    if queue_start_time = self.class.extract_request_start_time(env)
-      gauge("queue_time", process_start_time - queue_start_time)
-    end
+    queue_start_time = self.class.extract_request_start_time(env)
+    gauge("queue_time", process_start_time - queue_start_time) if queue_start_time
 
     if @request_end_time
       gauge("idle", process_start_time - @request_end_time)
@@ -50,7 +49,7 @@ class RequestTiming
     end
   end
 
-  def gauge(kind, size, route=nil)
+  def gauge(kind, size, route = nil)
     InstrumentalReporters.gauge("web.#{kind}", size)
     InstrumentalReporters.gauge("web.#{kind}.#{route}", size) if route
   end
@@ -61,8 +60,8 @@ class RequestTiming
   end
 
   def self.extract_route(controller:, path:)
-    if ! controller
-      return "assets" if path =~ /\A\/{0,2}\/assets/
+    unless controller
+      return "assets" if path =~ %r|\A/{0,2}/assets|
       return "unknown_endpoint"
     end
     controller_name = InstrumentalReporters.dotify(controller.class)
@@ -73,8 +72,7 @@ class RequestTiming
 
   def self.get_response_size(headers:, body:)
     return headers["Content-Length"] if headers["Content-Length"]
-    if body.respond_to?(:length) && body.length == 1
-      body.first.length.to_s
-    end
+    body.first.length.to_s if body.respond_to?(:length) && body.length == 1
   end
+
 end

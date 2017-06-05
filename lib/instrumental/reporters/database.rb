@@ -1,4 +1,5 @@
 module Instrumental
+
   class Database < Reporter
 
     def self.enabled?
@@ -10,6 +11,7 @@ module Instrumental
         include QueryInterceptor
       end
     end
+
   end
 
   module QueryInterceptor
@@ -27,7 +29,7 @@ module Instrumental
 
     def log_with_instrumental(*args, &block)
       start_time = Time.now.to_f
-      sql, name, binds = args
+      sql, name, _binds = args
       sql = sql.dup.force_encoding(Encoding::BINARY)
       metrics = [metric_for_name(name, sql), metric_for_sql(sql), "database.sql"].compact
 
@@ -35,7 +37,7 @@ module Instrumental
         log_without_instrumental(*args, &block)
       ensure
         duration = Time.now.to_f - start_time
-        metrics.each{ |m| InstrumentalReporters.gauge(m, duration) }
+        metrics.each { |m| InstrumentalReporters.gauge(m, duration) }
       end
     end
 
@@ -44,42 +46,43 @@ module Instrumental
         model = parts.first
         operation = parts.last.downcase
         op_name = case operation
-                  when 'load', 'count', 'exists' then 'find'
-                  when 'indexes', 'columns' then nil # fall back to DirectSQL
-                  when 'destroy', 'find', 'create' then operation
-                  when 'save', 'update' then 'update'
+                  when "load", "count", "exists" then "find"
+                  when "indexes", "columns" then nil # fall back to DirectSQL
+                  when "destroy", "find", "create" then operation
+                  when "save", "update" then "update"
                   else
-                    if model == 'Join'
-                      operation
-                    end
+                    operation if model == "Join"
                   end
         return "active_record.#{InstrumentalReporters.dotify(model)}.#{op_name}" if op_name
       end
 
       if sql =~ /^INSERT INTO `([a-z_]+)` /
-        "active_record.#{instrumentable_for_table_name($1)}.create"
+        "active_record.#{instrumentable_for_table_name(Regexp.last_match(1))}.create"
       elsif sql =~ /^UPDATE `([a-z_]+)` /
-        "active_record.#{instrumentable_for_table_name($1)}.update"
+        "active_record.#{instrumentable_for_table_name(Regexp.last_match(1))}.update"
       elsif sql =~ /^DELETE FROM `([a-z_]+)` /
-        "active_record.#{instrumentable_for_table_name($1)}.destroy"
+        "active_record.#{instrumentable_for_table_name(Regexp.last_match(1))}.destroy"
       elsif sql =~ /^SELECT .+ FROM `([a-z_]+)` /
-        "active_record.#{instrumentable_for_table_name($1)}.find"
+        "active_record.#{instrumentable_for_table_name(Regexp.last_match(1))}.find"
       end
     end
 
     def metric_for_sql(sql)
       if sql =~ SQL_TYPE_EXP
-        "database.sql.#{$1.downcase}"
+        "database.sql.#{Regexp.last_match(1).downcase}"
       else
         "database.sql.other"
       end
     end
 
     def instrumentable_for_table_name(table_name)
-      @table_name_to_model ||= { }
-      klass_name = @table_name_to_model[table_name] ||=
-        (ActiveRecord::Base.descendants.detect{|k| k.table_name == table_name}.try(:name) || table_name)
+      @table_name_to_model ||= {}
+      klass_name =
+        @table_name_to_model[table_name] ||=
+          (ActiveRecord::Base.descendants.detect { |k| k.table_name == table_name }.try(:name) || table_name)
       InstrumentalReporters.dotify(klass_name)
     end
+
   end
+
 end

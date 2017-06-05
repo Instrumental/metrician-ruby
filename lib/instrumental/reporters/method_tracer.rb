@@ -1,4 +1,5 @@
 module Instrumental
+
   class MethodTracer < Reporter
 
     def self.enabled?
@@ -16,7 +17,7 @@ module Instrumental
     def self.default_metric_name(klass, is_klass_method, method_name)
       name = klass.name.underscore
       name = "#{name}.self" if is_klass_method
-      "tracer.#{name}.#{method_name}".downcase.tr_s('^a-zA-Z0-9.', '_')
+      "tracer.#{name}.#{method_name}".downcase.tr_s("^a-zA-Z0-9.", "_")
     end
 
     def self.traceable_method?(klass, method_name)
@@ -36,7 +37,7 @@ module Instrumental
           begin
             #{untraced_name}(*args, &block)
           ensure
-            InstrumentalReporters.gauge('#{metric_name}', (Time.now - start_time).to_f)
+            InstrumentalReporters.gauge("#{metric_name}", (Time.now - start_time).to_f)
           end
         end
         alias :#{untraced_name} :#{method_name}
@@ -55,9 +56,12 @@ module Instrumental
       metric_name ||= TracingMethodInterceptor.default_metric_name(self, is_klass_method, method_name)
       untraced_name = "without_instrumental_trace_#{method_name}"
 
-      traced_method_code = TracingMethodInterceptor.code_to_eval(is_klass_method, method_name, traced_name,
-                                                     untraced_name, metric_name)
+      traced_method_code =
+        TracingMethodInterceptor.code_to_eval(is_klass_method, method_name, traced_name,
+                                              untraced_name, metric_name)
       class_eval(traced_method_code, __FILE__, __LINE__)
     end
+
   end
+
 end

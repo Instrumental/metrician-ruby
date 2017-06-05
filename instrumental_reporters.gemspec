@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__)
+$LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require "instrumental_reporters/version"
 
 Gem::Specification.new do |s|
@@ -7,14 +7,15 @@ Gem::Specification.new do |s|
   s.authors     = ["Expected Behavior"]
   s.email       = ["support@instrumentalapp.com"]
   s.homepage    = "http://instrumentalapp.com/"
-  s.summary     = %q{A summary}
-  s.description = %q{A description}
+  s.summary     = "A summary"
+  s.description = "A description"
   s.license     = "MIT"
-
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib", "app"]
-  s.add_dependency(%q<instrumental_agent>, [">= 0"])
+  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.require_paths = %w[lib app]
+
+  s.add_dependency("instrumental_agent", [">= 0"])
+  s.add_development_dependency("rubocop")
 end

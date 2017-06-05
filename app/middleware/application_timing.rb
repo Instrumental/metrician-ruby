@@ -12,12 +12,10 @@ class ApplicationTiming
   end
 
   def call(env)
-    begin
-      start_time = Time.now.to_f
-      @app.call(env)
-    ensure
-      env["REQUEST_TOTAL_TIME"] = (Time.now.to_f - start_time)
-    end
+    start_time = Time.now.to_f
+    @app.call(env)
+  ensure
+    env["REQUEST_TOTAL_TIME"] = (Time.now.to_f - start_time)
   end
 
 end
