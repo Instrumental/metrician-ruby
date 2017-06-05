@@ -1,6 +1,7 @@
 module Instrumental
   class Memcache < Reporter
-    METHODS = [:get, :delete, :cas, :prepend, :append, :replace, :decrement, :increment, :add, :set]
+
+    METHODS = %i[get delete cas prepend append replace decrement increment add set].freeze
 
     def self.memcached_gem?
       !!defined?(::Memcached)
@@ -32,7 +33,7 @@ module Instrumental
             begin
               #{method_name}_without_instrumental_trace(*args, &blk)
             ensure
-              InstrumentalReporters.agent.gauge("memcache.#{method_name}", (Time.now - start_time).to_f)
+              InstrumentalReporters.gauge("memcache.#{method_name}", (Time.now - start_time).to_f)
             end
           end
           alias #{method_name}_without_instrumental_trace #{method_name}
@@ -40,5 +41,6 @@ module Instrumental
         EOD
       end
     end
+
   end
 end

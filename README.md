@@ -1,4 +1,8 @@
-## Automatic Metrics
+# Instrumental Reporters
+
+Automatically get metrics for [Instrumental](https://instrumentalapp.com) from your Ruby application.
+
+## Automatic Metrics For Ruby
 
 Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcache, Dalli, Delayed Job and generic method tracing.
 
