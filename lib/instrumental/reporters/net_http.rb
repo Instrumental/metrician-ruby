@@ -1,5 +1,6 @@
 module Instrumental
   class NetHttp < Reporter
+
     def self.enabled?
       true
     end
@@ -19,5 +20,6 @@ module Instrumental
         alias_method :request, :request_with_instrumental_trace
       end
     end
+
   end
 end

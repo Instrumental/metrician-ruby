@@ -60,8 +60,8 @@ class RequestTiming
   end
 
   def self.extract_route(controller:, path:)
-    if ! controller
-      return "assets" if path =~ /\A\/{0,2}\/assets/
+    unless controller
+      return "assets" if path =~ %r|\A/{0,2}/assets|
       return "unknown_endpoint"
     end
     controller_name = InstrumentalReporters.dotify(controller.class)
@@ -72,8 +72,7 @@ class RequestTiming
 
   def self.get_response_size(headers:, body:)
     return headers["Content-Length"] if headers["Content-Length"]
-    if body.respond_to?(:length) && body.length == 1
-      body.first.length.to_s
-    end
+    body.first.length.to_s if body.respond_to?(:length) && body.length == 1
   end
+
 end
