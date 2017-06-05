@@ -25,29 +25,33 @@ class RequestTiming
 
     begin
       status, headers, body = @app.call(env)
-      response_size = headers["Content-Length"]
+      response_size = self.class.get_response_size(headers: headers, body: body)
       [status, headers, body]
     ensure
-      current_route = self.class.extract_route(env["action_controller.instance"])
-
+      current_route = self.class.extract_route(
+        controller: env["action_controller.instance"],
+        path: env["REQUEST_PATH"]
+      )
       request_time = env["REQUEST_TOTAL_TIME"].to_f
       env["REQUEST_TOTAL_TIME"] = nil
       gauge("request", request_time, current_route)
 
-      if response_size && !response_size.strip.empty?
+      # Note that 30xs don't have content-length, so cached
+      # items will report other metrics but not this one
+      if response_size && !response_size.to_s.strip.empty?
         gauge("response_size", response_size.to_i, current_route)
       end
 
       middleware_time = (Time.now.to_f - process_start_time) - request_time
-      gauge("middleware", middleware_time, current_route)
+      gauge("middleware", middleware_time)
 
       @request_end_time = Time.now.to_f
     end
   end
 
   def gauge(kind, size, route = nil)
-    InstrumentalReporters.agent.gauge("web.#{kind}", size)
-    InstrumentalReporters.agent.gauge("web.#{kind}.#{route}", size) if route
+    InstrumentalReporters.gauge("web.#{kind}", size)
+    InstrumentalReporters.gauge("web.#{kind}.#{route}", size) if route
   end
 
   def self.extract_request_start_time(env)
@@ -55,12 +59,21 @@ class RequestTiming
     result > 1_000_000_000 ? result : nil
   end
 
-  def self.extract_route(controller)
-    return "unknown_endpoint" unless controller
+  def self.extract_route(controller:, path:)
+    if ! controller
+      return "assets" if path =~ /\A\/{0,2}\/assets/
+      return "unknown_endpoint"
+    end
     controller_name = InstrumentalReporters.dotify(controller.class)
     action_name     = controller.action_name.blank? ? "unknown_action" : controller.action_name
     method_name     = controller.request.request_method.to_s
     "#{controller_name}.#{action_name}.#{method_name}".downcase
   end
 
+  def self.get_response_size(headers:, body:)
+    return headers["Content-Length"] if headers["Content-Length"]
+    if body.respond_to?(:length) && body.length == 1
+      body.first.length.to_s
+    end
+  end
 end

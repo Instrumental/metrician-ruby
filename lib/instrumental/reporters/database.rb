@@ -37,7 +37,7 @@ module Instrumental
         log_without_instrumental(*args, &block)
       ensure
         duration = Time.now.to_f - start_time
-        metrics.each { |m| InstrumentalReporters.agent.gauge(m, duration) }
+        metrics.each{ |m| InstrumentalReporters.gauge(m, duration) }
       end
     end
 

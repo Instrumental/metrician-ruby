@@ -21,8 +21,35 @@ module InstrumentalReporters
     @null_agent ||= Instrumental::Agent.new(nil, enabled: false)
   end
 
+  def self.logger=(logger)
+    agent.logger = logger
+  end
+
   def self.dotify(klass)
     klass.to_s.underscore.gsub(%r{/}, ".")
   end
 
+  def self.prefix=(prefix)
+    @prefix = prefix.to_s[-1] == "." ? prefix.to_s : "#{prefix}."
+  end
+
+  def self.prefix
+    @prefix || ""
+  end
+
+  def self.prefixed?
+    @prefixed ||= !prefix.empty?
+  end
+
+  def self.increment(metrics, value)
+    prefixed? ?
+      agent.increment("#{prefix}#{metric}", value) :
+      agent.increment(metric, value)
+  end
+
+  def self.gauge(metric, value)
+    prefixed? ?
+      agent.gauge("#{prefix}#{metric}", value) :
+      agent.gauge(metric, value)
+  end
 end
