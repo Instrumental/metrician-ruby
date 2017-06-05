@@ -1,5 +1,7 @@
 module Instrumental
+
   class SidekiqMiddleware
+
     def call(worker, _msg, _queue)
       start = Time.now
       yield
@@ -11,6 +13,7 @@ module Instrumental
       duration = Time.now - start
       InstrumentalReporters.agent.gauge(job_metric_instrumentation_name(worker), duration)
     end
+
   end
 
   def job_metric_instrumentation_name(worker)
@@ -18,4 +21,5 @@ module Instrumental
     name = worker.class.name.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
     "jobs.#{name}"
   end
+
 end

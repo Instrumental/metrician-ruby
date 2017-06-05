@@ -1,5 +1,6 @@
 module Instrumental
   class Sidekiq < Reporter
+
     def self.enabled?
       !!defined?(::Sidekiq)
     end
@@ -12,5 +13,6 @@ module Instrumental
         end
       end
     end
+
   end
 end

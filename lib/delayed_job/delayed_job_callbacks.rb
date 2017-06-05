@@ -1,5 +1,6 @@
 module Instrumental
   class DelayedJobCallbacks < ::Delayed::Plugin
+
     callbacks do |lifecycle|
       lifecycle.around(:invoke_job) do |job, &block|
         begin
@@ -29,5 +30,6 @@ module Instrumental
       name = job.name.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
       "jobs.#{name}"
     end
+
   end
 end
