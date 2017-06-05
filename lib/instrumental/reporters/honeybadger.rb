@@ -10,8 +10,8 @@ module Instrumental
         def notify_with_instrumental(exception, options = {})
           notify_without_instrumental(exception, options)
         ensure
-          InstrumentalReporters.agent.increment("exception")
-          InstrumentalReporters.agent.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
+          InstrumentalReporters.increment("exception")
+          InstrumentalReporters.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
         end
         alias_method_chain :notify, :instrumental
 

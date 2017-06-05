@@ -36,7 +36,7 @@ module Instrumental
           begin
             #{untraced_name}(*args, &block)
           ensure
-            InstrumentalReporters.agent.gauge('#{metric_name}', (Time.now - start_time).to_f)
+            InstrumentalReporters.gauge('#{metric_name}', (Time.now - start_time).to_f)
           end
         end
         alias :#{untraced_name} :#{method_name}
