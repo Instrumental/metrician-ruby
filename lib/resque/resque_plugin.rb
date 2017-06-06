@@ -1,3 +1,5 @@
+# Reference materials:
+# https://github.com/resque/resque/blob/master/docs/HOOKS.md
 module Instrumental
 
   module ResquePlugin
@@ -9,12 +11,15 @@ module Instrumental
     ensure
       duration = Time.now - start
       InstrumentalReporters.gauge(Instrumental::ResqueHelper.job_metric_instrumentation_name(self), duration)
+      InstrumentalReporters.agent.cleanup
     end
 
     def on_failure_with_instrumental(_e, *_args)
       InstrumentalReporters.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.error")
+      InstrumentalReporters.agent.cleanup
     end
 
+    ::Resque.before_fork = proc { InstrumentalReporters.agent.cleanup }
   end
 
   module ResqueHelper
