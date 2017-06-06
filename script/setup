@@ -37,11 +37,16 @@ if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'instrumental_
 fi
 mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;' -u root
 
-# bundle install
-# bin/rake app:setup
+if [ ! -f spec/support/database.yml ]; then
+  echo "spec/support/database.yml doesn't exist, run:"
+  echo "  cp spec/support/database.sample.yml spec/support/database.yml"
+  echo
+  echo "and update the credentials to match your system"
+else
+  echo "****************************************************************"
+  echo "*                                                              *"
+  echo "*                         Good to go!                          *"
+  echo "*                                                              *"
+  echo "****************************************************************"
+fi
 
-echo "****************************************************************"
-echo "*                                                              *"
-echo "*                         Good to go!                          *"
-echo "*                                                              *"
-echo "****************************************************************"
