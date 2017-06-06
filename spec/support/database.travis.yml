@@ -1,0 +1,9 @@
+mysql:
+  database: my_gem_test
+  username: travis
+  password:
+
+postgresql:
+  database: my_gem_test
+  user: postgres
+  password:

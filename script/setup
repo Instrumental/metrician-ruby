@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")/.."
+HOMEBREW_PREFIX=$(brew --config | grep HOMEBREW_PREFIX | sed 's/HOMEBREW_PREFIX: //')
+
+brew list redis > /dev/null 2>&1 || (
+  brew install redis
+  brew services restart redis
+)
+brew list postgresql > /dev/null 2>&1 || brew install postgresql
+
+# TODO: Install all rubies in .travis
+rbenv which ruby >/dev/null 2>&1 || (brew upgrade ruby-build || true; rbenv install)
+
+# Setup rbenv so we can switch rubies below
+eval "$(rbenv init - --no-rehash)"
+
+for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["rvm"].join(" ")'`; do
+  rbenv versions --bare | grep "^${ruby_version}$" || rbenv install $ruby_version
+  rbenv shell $ruby_version
+
+  gem list -i bundler >/dev/null || gem install bundler
+
+  gem list -i gemika >/dev/null || gem install gemika
+
+  rake matrix:install
+done
+
+psql -c 'create database instrumental_reporters_test;' postgres
+mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;' -u root
+
+# bundle install
+# bin/rake app:setup
+
+echo "****************************************************************"
+echo "*                                                              *"
+echo "*                         Good to go!                          *"
+echo "*                                                              *"
+echo "****************************************************************"

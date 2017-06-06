@@ -1,0 +1,10 @@
+mysql:
+  database: instrumental_reporters_test
+  host: localhost
+  username: root
+  password:
+
+postgresql:
+  database: instrumental_reporters_test
+  user:
+  password:

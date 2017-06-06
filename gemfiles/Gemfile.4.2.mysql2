@@ -1,0 +1,15 @@
+source 'https://rubygems.org'
+
+# Runtime dependencies
+gem 'rails', '~>4.2.0'
+gem 'mysql2', '= 0.3.17'
+
+# Development dependencies
+gem 'rspec', '~> 3.4'
+gem 'rake'
+gem 'byebug'
+gem 'gemika'
+gem 'database_cleaner'
+
+# Gem under test
+gem 'instrumental_reporters', :path => '..'

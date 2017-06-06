@@ -1,3 +1,4 @@
+require 'net/http'
 module Instrumental
   class NetHttp < Reporter
 
