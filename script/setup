@@ -32,7 +32,9 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
   rake matrix:install
 done
 
-psql -c 'create database instrumental_reporters_test;' postgres
+if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'instrumental_reporters_test'" | grep -q 1; then
+  psql -c 'create database instrumental_reporters_test;' postgres
+fi
 mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;' -u root
 
 # bundle install
