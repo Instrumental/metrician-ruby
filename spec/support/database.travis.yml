@@ -1,9 +1,9 @@
 mysql:
-  database: my_gem_test
+  database: instrumental_reporters_test
   username: travis
   password:
 
 postgresql:
-  database: my_gem_test
+  database: instrumental_reporters_test
   user: postgres
   password:
