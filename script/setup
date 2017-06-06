@@ -7,6 +7,12 @@ brew list redis > /dev/null 2>&1 || (
   brew install redis
   brew services restart redis
 )
+
+brew list mysql > /dev/null 2>&1 || (
+  brew install mysql
+  brew services start mysql
+)
+
 brew list postgresql > /dev/null 2>&1 || brew install postgresql
 
 # TODO: Install all rubies in .travis
