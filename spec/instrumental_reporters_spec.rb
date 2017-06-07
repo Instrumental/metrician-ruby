@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe InstrumentalReporters do
   it "has a version number" do
-    expect(InstrumentalReporters::VERSION).not_to be nil
+    InstrumentalReporters::VERSION.should_not be nil
   end
 
   it "does something useful" do
