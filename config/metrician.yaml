@@ -1,0 +1,55 @@
+# A configuration for Metrician that control features of our
+# automated metric reporting
+
+---
+# "request_timing" settings control the Rack timing middleware's features
+:request_timing:
+  # allow insertion of Rack middleware for request timing
+  :enabled: true
+
+  # collect basic request timing for every request
+  :request:
+    :enabled: true
+
+  # report 5xx codes as errors
+  :error:
+    :enabled: true
+
+  # report time between requests in a server process as idle time
+  :idle:
+    :enabled: false
+
+  # report the payload size of requests
+  :response_size:
+    :enabled: false
+
+  # report the amount of time spent on middleware per request
+  :middleware:
+    :enabled: false
+
+  # report the amount of time a request spent queued at the web layer
+  # before hitting Rack
+  :queue_time:
+    :enabled: false
+
+  # report the controller, action, and verb for every request
+  :route_tracking:
+    :enabled: false
+
+# "database" settings control ActiveRecord metric reporting features
+:database:
+  # allow insertion of ActiveRecord adapter
+  :enabled: true
+
+  # collect basic query tracking for every query
+  :query:
+    :enabled: true
+
+  # collect generic sql query information (select, update, insert, etc.)
+  :sql:
+    :enabled: false
+
+  # collect query information for specific tables and ActiveRecord
+  # based queries (find, update, destroy)
+  :active_record:
+    :enabled: false
