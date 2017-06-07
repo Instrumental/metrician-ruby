@@ -37,6 +37,8 @@ module Instrumental
         env["REQUEST_TOTAL_TIME"] = nil
         gauge("request", request_time, current_route)
 
+        increment("error", current_route) if status >= 500
+
         # Note that 30xs don't have content-length, so cached
         # items will report other metrics but not this one
         if response_size && !response_size.to_s.strip.empty?
@@ -50,9 +52,24 @@ module Instrumental
       end
     end
 
-    def gauge(kind, size, route = nil)
-      InstrumentalReporters.gauge("web.#{kind}", size)
-      InstrumentalReporters.gauge("web.#{kind}.#{route}", size) if route
+    def gauge(kind, value, route = nil)
+      return unless configuration[kind.to_sym][:enabled]
+      InstrumentalReporters.gauge("web.#{kind}", value)
+      if route && configuration[:route_tracking][:enabled]
+        InstrumentalReporters.gauge("web.#{kind}.#{route}", value)
+      end
+    end
+
+    def increment(kind, route = nil)
+      return unless configuration[kind.to_sym][:enabled]
+      InstrumentalReporters.increment("web.#{kind}")
+      if route && configuration[:route_tracking][:enabled]
+        InstrumentalReporters.increment("web.#{kind}.#{route}")
+      end
+    end
+
+    def configuration
+      InstrumentalReporters.configuration[:request_timing]
     end
 
     def self.extract_request_start_time(env)

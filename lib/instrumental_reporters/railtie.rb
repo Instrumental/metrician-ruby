@@ -2,6 +2,8 @@ module InstrumentalReporters
   class Railtie < Rails::Railtie
 
     initializer "instrumental_reporters.load_middleware" do |app|
+      next unless InstrumentalReporters.configuration[:request_timing][:enabled]
+
       require "middleware/request_timing"
       require "middleware/application_timing"
 
