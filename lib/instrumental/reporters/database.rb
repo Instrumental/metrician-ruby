@@ -3,7 +3,8 @@ module Instrumental
   class Database < Reporter
 
     def self.enabled?
-      !!defined?(ActiveRecord)
+      !!defined?(ActiveRecord) &&
+        InstrumentalReporters.configuration[:database][:enabled]
     end
 
     def instrument
@@ -31,8 +32,10 @@ module Instrumental
       start_time = Time.now.to_f
       sql, name, _binds = args
       sql = sql.dup.force_encoding(Encoding::BINARY)
-      metrics = [metric_for_name(name, sql), metric_for_sql(sql), "database.sql"].compact
-
+      metrics = []
+      metrics << "database.query" if InstrumentalReporters.configuration[:database][:query][:enabled]
+      metrics << metric_for_name(name, sql) if InstrumentalReporters.configuration[:database][:active_record][:enabled]
+      metrics << metric_for_sql(sql) if InstrumentalReporters.configuration[:database][:sql][:enabled]
       begin
         log_without_instrumental(*args, &block)
       ensure
