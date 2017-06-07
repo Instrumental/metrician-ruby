@@ -14,8 +14,7 @@
 
 *You may also see another instance of `database.sql` and an instance of `database.sql.other` if the table schema is loaded.*
 
-*In development mode, you can expect to record one each of the following per
- asset on the page because they are served by Rack*
+*In development mode, you can expect to record one each of the following **per asset** on the page because they are served by Rack*
 
 * `web.request`
 * `web.request.assets`
