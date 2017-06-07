@@ -1,5 +1,4 @@
 module Instrumental
-
   class SidekiqMiddleware
 
     def call(worker, _msg, _queue)
@@ -21,5 +20,4 @@ module Instrumental
     end
 
   end
-
 end

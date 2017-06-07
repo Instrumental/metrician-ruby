@@ -20,6 +20,7 @@ module Instrumental
     end
 
     ::Resque.before_fork = proc { InstrumentalReporters.agent.cleanup }
+
   end
 
   module ResqueHelper
