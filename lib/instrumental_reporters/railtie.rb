@@ -1,7 +1,7 @@
 module InstrumentalReporters
   class Railtie < Rails::Railtie
 
-    initializer "instrumental_rails.load_middleware" do |app|
+    initializer "instrumental_reporters.load_middleware" do |app|
       require "middleware/request_timing"
       require "middleware/application_timing"
 
