@@ -41,7 +41,7 @@ module InstrumentalReporters
     @prefixed ||= !prefix.empty?
   end
 
-  def self.increment(metric, value)
+  def self.increment(metric, value = 1)
     prefixed? ? agent.increment("#{prefix}#{metric}", value) : agent.increment(metric, value)
   end
 
