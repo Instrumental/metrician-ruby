@@ -53,3 +53,13 @@
   # based queries (find, update, destroy)
   :active_record:
     :enabled: false
+
+# "external_service" settings control reporting metrics when Net::HTTP
+# is used to make requests
+:external_service:
+  # insert Net::HTTP monkey patch to record metrics
+  :enabled: true
+
+  # collect basic external request timing information
+  :request:
+    :enabled: true
