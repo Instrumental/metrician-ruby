@@ -2,7 +2,8 @@ module Instrumental
   class Redis < Reporter
 
     def self.enabled?
-      !!defined?(::Redis)
+      !!defined?(::Redis) &&
+        InstrumentalReporters.configuration[:cache][:enabled]
     end
 
     def instrument
@@ -13,8 +14,12 @@ module Instrumental
           begin
             call_without_instrumental_trace(*args, &blk)
           ensure
-            method_name = args[0].is_a?(Array) ? args[0][0] : args[0]
-            InstrumentalReporters.gauge("redis.#{method_name}", (Time.now - start_time).to_f)
+            duration = (Time.now - start_time).to_f
+            InstrumentalReporters.gauge("cache.command", duration) if InstrumentalReporters.configuration[:cache][:command][:enabled]
+            if InstrumentalReporters.configuration[:cache][:specific][:enabled]
+              method_name = args[0].is_a?(Array) ? args[0][0] : args[0]
+              InstrumentalReporters.gauge("cache.command.#{method_name}", duration)
+            end
           end
         end
         alias_method :call_without_instrumental_trace, :call

@@ -86,3 +86,18 @@
   # record metrics for each kind of job that is worked from the queue
   :job_specific:
     :enabled: false
+
+# "cache" settings control timing of commands to services often used as
+# application caches like memcached and redis
+:cache:
+
+  # insert cache system tracking and monkey patching
+  :enabled: true
+
+  # record the basic timing of every command
+  :command:
+    :enabled: true
+
+  # record the timing of each command as its own metric
+  :specific:
+    :enabled: false
