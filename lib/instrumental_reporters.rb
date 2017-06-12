@@ -26,6 +26,10 @@ module InstrumentalReporters
     agent.logger = logger
   end
 
+  def self.logger
+    agent.logger
+  end
+
   def self.dotify(klass)
     klass.to_s.underscore.gsub(%r{/}, ".")
   end
