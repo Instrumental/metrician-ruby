@@ -8,7 +8,7 @@ module Instrumental
     end
 
     def self.dalli_gem?
-      !!defined?(::Dalli)
+      !!defined?(::Dalli) && !!defined?(::Dalli::Client)
     end
 
     def client_class
@@ -36,7 +36,7 @@ module Instrumental
             ensure
               duration = (Time.now - start_time).to_f
               InstrumentalReporters.gauge("cache.command", duration) if InstrumentalReporters.configuration[:cache][:command][:enabled]
-              InstrumentalReporters.gauge("cache.command.#{method_name}", duration) if InstrumentalReporters.configuration[:cache][:specific][:enabled]
+              InstrumentalReporters.gauge("cache.command.#{method_name}", duration) if InstrumentalReporters.configuration[:cache][:command_specific][:enabled]
             end
           end
           alias #{method_name}_without_instrumental_trace #{method_name}

@@ -16,7 +16,7 @@ module Instrumental
           ensure
             duration = (Time.now - start_time).to_f
             InstrumentalReporters.gauge("cache.command", duration) if InstrumentalReporters.configuration[:cache][:command][:enabled]
-            if InstrumentalReporters.configuration[:cache][:specific][:enabled]
+            if InstrumentalReporters.configuration[:cache][:command_specific][:enabled]
               method_name = args[0].is_a?(Array) ? args[0][0] : args[0]
               InstrumentalReporters.gauge("cache.command.#{method_name}", duration)
             end
