@@ -99,5 +99,21 @@
     :enabled: true
 
   # record the timing of each command as its own metric
-  :specific:
+  :command_specific:
+    :enabled: false
+
+
+# "exception" settings control reporting when exceptions are caught
+# by an exception tracker in your application
+:exception:
+
+  # insert exception tracking instrumenation and monkey patching
+  :enabled: false
+
+  # report when an exception is raised and caught by an exception tracker
+  :raise:
+    :enabled: true
+
+  # report a metric per exception type raised
+  :exception_specific:
     :enabled: false

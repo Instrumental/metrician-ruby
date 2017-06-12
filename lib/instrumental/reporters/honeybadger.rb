@@ -2,7 +2,8 @@ module Instrumental
   class Honeybadger < Reporter
 
     def self.enabled?
-      !!defined?(::Honeybadger)
+      !!defined?(::Honeybadger) &&
+        InstrumentalReporters.configuration[:exception][:enabled]
     end
 
     def instrument
@@ -13,8 +14,8 @@ module Instrumental
           #   context_manager.get_rack_env
           notify_without_instrumental(exception, options)
         ensure
-          InstrumentalReporters.increment("exception")
-          InstrumentalReporters.increment("exception.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception
+          InstrumentalReporters.increment("exception.raise") if InstrumentalReporters.configuration[:exception][:raise][:enabled]
+          InstrumentalReporters.increment("exception.raise.#{InstrumentalReporters.dotify(exception.class.name.underscore)}") if exception && InstrumentalReporters.configuration[:exception][:exception_specific][:enabled]
         end
         alias_method_chain :notify, :instrumental
       end
