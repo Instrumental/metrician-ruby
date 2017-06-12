@@ -2,6 +2,7 @@
 # automated metric reporting
 
 ---
+
 # "request_timing" settings control the Rack timing middleware's features
 :request_timing:
   # allow insertion of Rack middleware for request timing
@@ -36,6 +37,7 @@
   :route_tracking:
     :enabled: false
 
+
 # "database" settings control ActiveRecord metric reporting features
 :database:
   # allow insertion of ActiveRecord adapter
@@ -54,6 +56,7 @@
   :active_record:
     :enabled: false
 
+
 # "external_service" settings control reporting metrics when Net::HTTP
 # is used to make requests
 :external_service:
@@ -63,3 +66,23 @@
   # collect basic external request timing information
   :request:
     :enabled: true
+
+
+# "queue" settings control reporting metrics when ruby job systems
+# work through their job queues
+:queue:
+
+  # insert job system middleware and monkey patches when presence detected
+  :enabled: true
+
+  # record the basic timing of every job
+  :process:
+    :enabled: true
+
+  # record when an error occurs in the a job
+  :error:
+    :enabled: true
+
+  # record metrics for each kind of job that is worked from the queue
+  :job_specific:
+    :enabled: false
