@@ -12,7 +12,7 @@ RSpec.describe InstrumentalReporters do
     InstrumentalReporters.activate
 
     agent.stub(:gauge)
-    agent.should_receive(:gauge).with("database.sql.select", anything)
+    agent.should_receive(:gauge).with("database.query", anything)
 
     User.where(name: "foobar").to_a
   end
@@ -25,7 +25,7 @@ RSpec.describe InstrumentalReporters do
     InstrumentalReporters.activate
 
     agent.stub(:gauge)
-    agent.should_receive(:gauge).with("jobs.TestDelayedJob", anything)
+    agent.should_receive(:gauge).with("queue.process", anything)
 
     Delayed::Job.enqueue(TestDelayedJob.new(success: true))
     Delayed::Worker.new(exit_on_complete: true).start
