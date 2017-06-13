@@ -21,6 +21,14 @@ rbenv which ruby >/dev/null 2>&1 || (brew upgrade ruby-build || true; rbenv inst
 # Setup rbenv so we can switch rubies below
 eval "$(rbenv init - --no-rehash)"
 
+if [ ! -e Gemfile ]; then
+  echo "Gemfile symlink is broken. Should point to a known good Gemfile-x variant in ./gemfiles"
+  exit 199
+elif [ ! -e Gemfile.lock ]; then
+  echo "Gemfile.lock symlink is broken. Should point to a known good Gemfile-x.lock variant in ./gemfiles"
+  exit 200
+fi
+
 for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["rvm"].join(" ")'`; do
   rbenv versions --bare | grep "^${ruby_version}$" || rbenv install $ruby_version
   rbenv shell $ruby_version
