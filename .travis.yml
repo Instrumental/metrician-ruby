@@ -28,3 +28,9 @@ notifications:
     - developers@expectedbehavior.com
 
 script: bundle exec rake current_rspec
+
+services:
+  - mysql
+  - postgresql
+  - redis-server
+  - memcached
