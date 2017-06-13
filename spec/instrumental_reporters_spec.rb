@@ -5,14 +5,16 @@ RSpec.describe InstrumentalReporters do
     InstrumentalReporters::VERSION.should_not be nil
   end
 
-  specify "ActiveRecord is instrumented" do
-    InstrumentalReporters.activate
-    agent = InstrumentalReporters.agent
+  describe "database" do
+    specify "ActiveRecord is instrumented" do
+      InstrumentalReporters.activate
+      agent = InstrumentalReporters.agent
 
-    agent.stub(:gauge)
-    agent.should_receive(:gauge).with("database.query", anything)
+      agent.stub(:gauge)
+      agent.should_receive(:gauge).with("database.query", anything)
 
-    User.where(name: "foobar").to_a
+      User.where(name: "foobar").to_a
+    end
   end
 
   describe "job queue systems" do
