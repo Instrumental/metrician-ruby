@@ -10,7 +10,8 @@ gem 'rake'
 gem 'byebug'
 gem 'gemika'
 gem 'database_cleaner'
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', require: false
+gem 'resque', require: false
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'
