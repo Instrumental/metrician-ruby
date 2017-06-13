@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")/.."
+
+eval "$(rbenv init - --no-rehash)"
+
+success="true"
+
+for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["rvm"].join(" ")'`; do
+  {
+    echo "testing rub version $ruby_version" &&
+      rbenv shell $ruby_version &&
+      bundle exec rake matrix:spec
+  } || success="false"
+done
+
+if [ $success == "true" ]; then
+  echo "Passed"
+else
+  echo "======================================"
+  echo "FAILED"
+  echo "======================================"
+fi

@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")/.."
+HOMEBREW_PREFIX=$(brew --config | grep HOMEBREW_PREFIX | sed 's/HOMEBREW_PREFIX: //')
+
+brew list redis > /dev/null 2>&1 || (
+  brew install redis
+  brew services restart redis
+)
+
+brew list mysql > /dev/null 2>&1 || (
+  brew install mysql
+  brew services start mysql
+)
+
+brew list postgresql > /dev/null 2>&1 || brew install postgresql
+
+# TODO: Install all rubies in .travis
+rbenv which ruby >/dev/null 2>&1 || (brew upgrade ruby-build || true; rbenv install)
+
+# Setup rbenv so we can switch rubies below
+eval "$(rbenv init - --no-rehash)"
+
+for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["rvm"].join(" ")'`; do
+  rbenv versions --bare | grep "^${ruby_version}$" || rbenv install $ruby_version
+  rbenv shell $ruby_version
+
+  gem list -i bundler >/dev/null || gem install bundler
+
+  gem list -i gemika >/dev/null || gem install gemika
+
+  rake matrix:install
+done
+
+if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'instrumental_reporters_test'" | grep -q 1; then
+  psql -c 'create database instrumental_reporters_test;' postgres
+fi
+mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;' -u root
+
+if [ ! -f spec/support/database.yml ]; then
+  echo "spec/support/database.yml doesn't exist, run:"
+  echo "  cp spec/support/database.sample.yml spec/support/database.yml"
+  echo
+  echo "and update the credentials to match your system"
+else
+  echo "****************************************************************"
+  echo "*                                                              *"
+  echo "*                         Good to go!                          *"
+  echo "*                                                              *"
+  echo "****************************************************************"
+fi
+

@@ -1,2 +1,1 @@
-source :rubygems
-gemspec
+gemfiles/Gemfile.4.2.mysql2

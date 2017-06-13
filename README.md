@@ -2,6 +2,8 @@
 
 Automatically get metrics for [Instrumental](https://instrumentalapp.com) from your Ruby application.
 
+[![Build Status](https://travis-ci.org/Instrumental/instrumental_reporters.svg?branch=master)](https://travis-ci.org/Instrumental/instrumental_reporters)
+
 ## Automatic Metrics For Ruby
 
 Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcache, Dalli, Delayed Job and generic method tracing.

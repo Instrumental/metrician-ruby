@@ -1,0 +1,30 @@
+sudo: false
+language: ruby
+before_install: gem install bundler -v 1.14.1
+
+rvm:
+  - 2.1.5
+  - 2.2.3
+  - 2.3.0
+  - 2.4.0
+
+gemfile:
+  - gemfiles/Gemfile.4.2.mysql2
+  - gemfiles/Gemfile.5.0.pg
+
+matrix:
+  exclude:
+    - gemfile: gemfiles/Gemfile.5.0.pg
+      rvm: 2.1.5
+
+before_script:
+  - psql -c 'create database instrumental_reporters_test;' -U postgres
+  - mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;'
+
+cache: bundler
+
+notifications:
+  email:
+    - developers@expectedbehavior.com
+
+script: bundle exec rake current_rspec

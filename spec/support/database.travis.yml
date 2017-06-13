@@ -1,0 +1,9 @@
+mysql:
+  database: instrumental_reporters_test
+  username: travis
+  password:
+
+postgresql:
+  database: instrumental_reporters_test
+  user: postgres
+  password:
