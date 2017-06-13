@@ -12,6 +12,7 @@ gem 'gemika'
 gem 'database_cleaner'
 gem 'delayed_job_active_record', require: false
 gem 'resque', require: false
+gem 'sidekiq', require: false
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'
