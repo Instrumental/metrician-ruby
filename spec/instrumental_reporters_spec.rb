@@ -77,6 +77,10 @@ RSpec.describe InstrumentalReporters do
       client.get("foo")
     end
 
+    # Why is this fuckshow? In Rails 4x, we're going to load the
+    # memcached gem, and in 5 we're going to use dalli
+    # this will allow us to set up a client without blowing up
+    # in the wrong env.
     def memcached_client
       begin
         require "memcached"
