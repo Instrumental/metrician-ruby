@@ -67,10 +67,34 @@ RSpec.describe InstrumentalReporters do
 
   describe "cache systems" do
     specify "redis is instrumented" do
-      require 'redis'
+      require "redis"
       InstrumentalReporters.activate
 
       client = Redis.new
+      agent = InstrumentalReporters.agent
+      agent.stub(:gauge)
+      agent.should_receive(:gauge).with("cache.command", anything)
+      client.get("foo")
+    end
+
+    def memcached_client
+      begin
+        require "memcached"
+        return Memcached.new("localhost:11211")
+      rescue LoadError
+      end
+      begin
+        require "dalli"
+        return Dalli::Client.new("localhost:11211")
+      rescue LoadError
+      end
+      raise "no memcached client"
+    end
+
+    specify "memcached is instrumented" do
+      client = memcached_client
+      InstrumentalReporters.activate
+
       agent = InstrumentalReporters.agent
       agent.stub(:gauge)
       agent.should_receive(:gauge).with("cache.command", anything)

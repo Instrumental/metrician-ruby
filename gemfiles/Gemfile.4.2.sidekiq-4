@@ -14,6 +14,7 @@ gem 'delayed_job_active_record', require: false
 gem 'resque', require: false
 gem 'sidekiq', '~>4.0', require: false
 gem 'redis', require: false
+gem 'memcached', require: false
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'
