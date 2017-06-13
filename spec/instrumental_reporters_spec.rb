@@ -64,4 +64,17 @@ RSpec.describe InstrumentalReporters do
       TestSidekiqWorker.perform_async({ "success" => true})
     end
   end
+
+  describe "cache systems" do
+    specify "redis is instrumented" do
+      require 'redis'
+      InstrumentalReporters.activate
+
+      client = Redis.new
+      agent = InstrumentalReporters.agent
+      agent.stub(:gauge)
+      agent.should_receive(:gauge).with("cache.command", anything)
+      client.get("foo")
+    end
+  end
 end
