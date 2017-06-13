@@ -107,4 +107,15 @@ RSpec.describe InstrumentalReporters do
       client.get("foo")
     end
   end
+
+  describe "external service timing" do
+    specify "Net::HTTP is instrumented" do
+      InstrumentalReporters.activate
+
+      agent = InstrumentalReporters.agent
+      agent.stub(:gauge)
+      agent.should_receive(:gauge).with("service.request", anything)
+      Net::HTTP.get(URI.parse("http://example.com/"))
+    end
+  end
 end
