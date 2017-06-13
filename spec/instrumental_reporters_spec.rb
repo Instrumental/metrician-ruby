@@ -104,7 +104,11 @@ RSpec.describe InstrumentalReporters do
       agent = InstrumentalReporters.agent
       agent.stub(:gauge)
       agent.should_receive(:gauge).with("cache.command", anything)
-      client.get("foo")
+      begin
+        client.get("foo-#{rand(100_000)}")
+      rescue Memcached::NotFound
+        # memcached raises this when there is no value for "foo-N" set
+      end
     end
   end
 
