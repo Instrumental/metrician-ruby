@@ -20,7 +20,6 @@ RSpec.describe InstrumentalReporters do
   describe "job queue systems" do
     describe "delayed_job" do
       before do
-        require "delayed_job_active_record"
         InstrumentalReporters.activate
         @agent = InstrumentalReporters.agent
       end
@@ -44,7 +43,6 @@ RSpec.describe InstrumentalReporters do
 
     describe "resque" do
       before do
-        require "resque"
         Resque.inline = true
         InstrumentalReporters.activate
         @agent = InstrumentalReporters.agent
@@ -108,7 +106,6 @@ RSpec.describe InstrumentalReporters do
 
   describe "cache systems" do
     specify "redis is instrumented" do
-      require "redis"
       InstrumentalReporters.activate
 
       client = Redis.new
@@ -163,9 +160,6 @@ RSpec.describe InstrumentalReporters do
   end
 
   describe "request timing" do
-    require "rack"
-    require "rack/test"
-
     include Rack::Test::Methods
 
     describe "success case" do

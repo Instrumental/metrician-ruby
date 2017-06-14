@@ -13,11 +13,11 @@ gem 'rake'
 gem 'byebug'
 gem 'gemika'
 gem 'database_cleaner'
-gem 'delayed_job_active_record', require: false
-gem 'resque', require: false
-gem 'redis', require: false
-gem 'dalli', require: false
-gem 'rack-test', require: false
+gem 'delayed_job_active_record'
+gem 'resque'
+gem 'redis'
+gem 'dalli'
+gem 'rack-test'
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'
