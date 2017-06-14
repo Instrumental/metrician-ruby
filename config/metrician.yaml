@@ -94,7 +94,7 @@
   # hook into caching libraries
   :enabled: true
 
-  # record the basic timing of every command
+  # record aggregate timing information for all cache commands
   :command:
     :enabled: true
 
