@@ -18,52 +18,94 @@ RSpec.describe InstrumentalReporters do
   end
 
   describe "job queue systems" do
-    specify "DelayedJob is instrumented" do
-      require "delayed_job_active_record"
-      InstrumentalReporters.activate
-      agent = InstrumentalReporters.agent
-
-      agent.stub(:gauge)
-      agent.should_receive(:gauge).with("queue.process", anything)
-
-      Delayed::Job.enqueue(TestDelayedJob.new(success: true))
-      Delayed::Worker.new(exit_on_complete: true).start
-    end
-
-    specify "Resque is instrumented" do
-      require "resque"
-      Resque.inline = true
-      InstrumentalReporters.activate
-      agent = InstrumentalReporters.agent
-
-      agent.stub(:gauge)
-      agent.should_receive(:gauge).with("queue.process", anything)
-
-      # typically instrumental reporters would be loaded in an initalizer
-      # and this _extend_ could be done inside the job itself, but here
-      # we are in a weird situation.
-      TestResqueJob.send(:extend, Instrumental::ResquePlugin)
-      Resque.enqueue(TestResqueJob, { "success" => true })
-    end
-
-    specify "Sidekiq is instrumented" do
-      require "sidekiq"
-      require 'sidekiq/testing'
-      Sidekiq::Testing.inline!
-      InstrumentalReporters.activate
-      # sidekiq doesn't use middleware by default in their testing
-      # harness, so we add it just as metrician does
-      Sidekiq::Testing.server_middleware do |chain|
-        chain.add Instrumental::SidekiqMiddleware
+    describe "delayed_job" do
+      before do
+        require "delayed_job_active_record"
+        InstrumentalReporters.activate
+        @agent = InstrumentalReporters.agent
       end
-      agent = InstrumentalReporters.agent
-      agent.stub(:gauge)
-      agent.should_receive(:gauge).with("queue.process", anything)
 
-      # avoid load order error of sidekiq here by just including the
-      # worker bits at latest possible time
-      TestSidekiqWorker.send(:include, Sidekiq::Worker)
-      TestSidekiqWorker.perform_async({ "success" => true})
+      specify "DelayedJob is instrumented" do
+        @agent.stub(:gauge)
+        @agent.should_receive(:gauge).with("queue.process", anything)
+
+        Delayed::Job.enqueue(TestDelayedJob.new(success: true))
+        Delayed::Worker.new(exit_on_complete: true).start
+      end
+
+      specify "job errors are instrumented" do
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("queue.error", 1)
+
+        Delayed::Job.enqueue(TestDelayedJob.new(error: true))
+        Delayed::Worker.new(exit_on_complete: true).start
+      end
+    end
+
+    describe "resque" do
+      before do
+        require "resque"
+        Resque.inline = true
+        InstrumentalReporters.activate
+        @agent = InstrumentalReporters.agent
+      end
+
+      specify "Resque is instrumented" do
+        @agent.stub(:gauge)
+        @agent.should_receive(:gauge).with("queue.process", anything)
+
+        # typically instrumental reporters would be loaded in an initalizer
+        # and this _extend_ could be done inside the job itself, but here
+        # we are in a weird situation.
+        TestResqueJob.send(:extend, Instrumental::ResquePlugin)
+        Resque.enqueue(TestResqueJob, { "success" => true })
+      end
+
+      specify "job errors are instrumented" do
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("queue.error", 1)
+
+        # typically instrumental reporters would be loaded in an initalizer
+        # and this _extend_ could be done inside the job itself, but here
+        # we are in a weird situation.
+        TestResqueJob.send(:extend, Instrumental::ResquePlugin)
+        lambda { Resque.enqueue(TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
+      end
+    end
+
+    describe "sidekiq" do
+      before do
+        require "sidekiq"
+        require 'sidekiq/testing'
+        Sidekiq::Testing.inline!
+        InstrumentalReporters.activate
+        # sidekiq doesn't use middleware by default in their testing
+        # harness, so we add it just as metrician does
+        Sidekiq::Testing.server_middleware do |chain|
+          chain.add Instrumental::SidekiqMiddleware
+        end
+        @agent = InstrumentalReporters.agent
+      end
+
+      specify "Sidekiq is instrumented" do
+        @agent.stub(:gauge)
+        @agent.should_receive(:gauge).with("queue.process", anything)
+
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        TestSidekiqWorker.send(:include, Sidekiq::Worker)
+        TestSidekiqWorker.perform_async({ "success" => true})
+      end
+
+      specify "job errors are instrumented" do
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("queue.error", 1)
+
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        TestSidekiqWorker.send(:include, Sidekiq::Worker)
+        lambda { TestSidekiqWorker.perform_async({ "error" => true}) }.should raise_error(StandardError)
+      end
     end
   end
 
