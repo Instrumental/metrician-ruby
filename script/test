@@ -14,19 +14,18 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
   } || success="false"
 done
 
-     TEST_RED='\033[1;31m'
-   TEST_GREEN='\033[1;32m'
-TEST_NO_COLOR='\033[0;0m'
 if [ $success == "true" ]; then
-  echo -e "${TEST_GREEN}"
-  echo -e "======================================"
-  echo -e "               Passed"
-  echo -e "======================================"
-  echo -e "${TEST_NO_COLOR}"
+  tput bold    # bold text
+  tput setaf 2 # green text
+  echo "======================================"
+  echo "               Passed"
+  echo "======================================"
+  tput sgr0    # reset to default text
 else
-  echo -e "${TEST_RED}"
-  echo -e "======================================"
-  echo -e "               FAILED"
-  echo -e "======================================"
-  echo -e "${TEST_NO_COLOR}"
+  tput bold    # bold text
+  tput setaf 2 # red text
+  echo "======================================"
+  echo "               FAILED"
+  echo "======================================"
+  tput sgr0    # reset to default text
 fi
