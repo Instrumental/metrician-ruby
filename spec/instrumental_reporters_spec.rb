@@ -115,35 +115,21 @@ RSpec.describe InstrumentalReporters do
       client.get("foo-#{rand(100_000)}")
     end
 
-    # Why is this fuckshow? In Rails 4x, we're going to load the
-    # memcached gem, and in 5 we're going to use dalli
-    # this will allow us to set up a client without blowing up
-    # in the wrong env.
-    def memcached_client
-      begin
-        require "memcached"
-        return Memcached.new("localhost:11211")
-      rescue LoadError
-      end
-      begin
-        require "dalli"
-        return Dalli::Client.new("localhost:11211")
-      rescue LoadError
-      end
-      raise "no memcached client"
-    end
+    [
+      defined?(::Memcached) && ::Memcached.new("localhost:11211"),
+      defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
+    ].compact.each do |client|
+      specify "memcached is instrumented" do
+        InstrumentalReporters.activate
 
-    specify "memcached is instrumented" do
-      client = memcached_client
-      InstrumentalReporters.activate
-
-      agent = InstrumentalReporters.agent
-      agent.stub(:gauge)
-      agent.should_receive(:gauge).with("cache.command", anything)
-      begin
-        client.get("foo-#{rand(100_000)}")
-      rescue Memcached::NotFound
-        # memcached raises this when there is no value for "foo-N" set
+        agent = InstrumentalReporters.agent
+        agent.stub(:gauge)
+        agent.should_receive(:gauge).with("cache.command", anything)
+        begin
+          client.get("foo-#{rand(100_000)}")
+        rescue Memcached::NotFound
+          # memcached raises this when there is no value for "foo-N" set
+        end
       end
     end
   end
