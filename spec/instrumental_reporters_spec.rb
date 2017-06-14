@@ -122,4 +122,53 @@ RSpec.describe InstrumentalReporters do
       Net::HTTP.get(URI.parse("http://example.com/"))
     end
   end
+
+  describe "request timing" do
+    require "rack"
+    require "rack/test"
+
+    include Rack::Test::Methods
+
+    describe "success case" do
+      def app
+        require "middleware/request_timing"
+        require "middleware/application_timing"
+        Rack::Builder.app do
+          use Instrumental::RequestTiming
+          use Instrumental::ApplicationTiming
+          run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
+        end
+      end
+
+      specify "Rack timing is instrumented" do
+        agent = InstrumentalReporters.agent
+        agent.stub(:gauge)
+        agent.should_receive(:gauge).with("web.request", anything)
+
+        get "/"
+      end
+    end
+
+    describe "error case" do
+      def app
+        require "middleware/request_timing"
+        require "middleware/application_timing"
+        Rack::Builder.app do
+          use Instrumental::RequestTiming
+          use Instrumental::ApplicationTiming
+          run lambda { |env| [500, {'Content-Type' => 'text/plain'}, ['BOOM']] }
+        end
+      end
+
+      specify "500s are instrumented for error tracking" do
+        agent = InstrumentalReporters.agent
+        agent.stub(:gauge)
+        agent.stub(:increment)
+        agent.should_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:increment).with("web.error", 1)
+
+        get "/"
+      end
+    end
+  end
 end

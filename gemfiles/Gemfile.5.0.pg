@@ -2,19 +2,22 @@ source 'https://rubygems.org'
 
 # Runtime dependencies
 gem 'rails', '~>5.0.0'
+
+# Differentiated development dependencies
 gem 'pg', '~>0.18.4'
+gem 'sidekiq', require: false
+gem 'rspec', '~>3.5'
 
 # Development dependencies
-gem 'rspec', '~>3.5'
 gem 'rake'
 gem 'byebug'
 gem 'gemika'
 gem 'database_cleaner'
 gem 'delayed_job_active_record', require: false
 gem 'resque', require: false
-gem 'sidekiq', require: false
 gem 'redis', require: false
 gem 'dalli', require: false
+gem 'rack-test', require: false
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'

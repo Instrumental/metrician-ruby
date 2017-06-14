@@ -161,6 +161,7 @@ DEPENDENCIES
   instrumental_reporters!
   memcached
   mysql2 (= 0.3.17)
+  rack-test
   rails (~> 4.2.0)
   rake
   redis

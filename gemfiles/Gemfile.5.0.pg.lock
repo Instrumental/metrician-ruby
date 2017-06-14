@@ -170,6 +170,7 @@ DEPENDENCIES
   gemika
   instrumental_reporters!
   pg (~> 0.18.4)
+  rack-test
   rails (~> 5.0.0)
   rake
   redis

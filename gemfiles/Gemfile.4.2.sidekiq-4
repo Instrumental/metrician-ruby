@@ -2,19 +2,22 @@ source 'https://rubygems.org'
 
 # Runtime dependencies
 gem 'rails', '~>4.2.0'
+
+# Differentiated development dependencies
 gem 'mysql2', '= 0.3.17'
+gem 'sidekiq', '~>4.0', require: false
+gem 'rspec', '~> 3.4'
 
 # Development dependencies
-gem 'rspec', '~> 3.4'
 gem 'rake'
 gem 'byebug'
 gem 'gemika'
 gem 'database_cleaner'
 gem 'delayed_job_active_record', require: false
 gem 'resque', require: false
-gem 'sidekiq', '~>4.0', require: false
 gem 'redis', require: false
 gem 'memcached', require: false
+gem 'rack-test', require: false
 
 # Gem under test
 gem 'instrumental_reporters', :path => '..'
