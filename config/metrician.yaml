@@ -1,11 +1,11 @@
-# A configuration for Metrician that control features of our
+# A configuration for Metrician that controls the features of our
 # automated metric reporting
 
 ---
 
-# "request_timing" settings control the Rack timing middleware's features
+# "request_timing" settings control the features of the Request Timing Rack Middleware
 :request_timing:
-  # allow insertion of Rack middleware for request timing
+  # hook into Rack middleware for request timing
   :enabled: true
 
   # collect basic request timing for every request
@@ -40,7 +40,7 @@
 
 # "database" settings control ActiveRecord metric reporting features
 :database:
-  # allow insertion of ActiveRecord adapter
+  # hook into ActiveRecord for db call timing
   :enabled: true
 
   # collect basic query tracking for every query
@@ -60,7 +60,7 @@
 # "external_service" settings control reporting metrics when Net::HTTP
 # is used to make requests
 :external_service:
-  # insert Net::HTTP monkey patch to record metrics
+  # hook into Net::HTTP to record timing metrics
   :enabled: true
 
   # collect basic external request timing information
@@ -72,7 +72,7 @@
 # work through their job queues
 :queue:
 
-  # insert job system middleware and monkey patches when presence detected
+  # hook into job system middleware when presence detected
   :enabled: true
 
   # record the basic timing of every job
@@ -91,7 +91,7 @@
 # application caches like memcached and redis
 :cache:
 
-  # insert cache system tracking and monkey patching
+  # hook into caching libraries
   :enabled: true
 
   # record the basic timing of every command
@@ -107,7 +107,7 @@
 # by an exception tracker in your application
 :exception:
 
-  # insert exception tracking instrumenation and monkey patching
+  # hook into exception tracking libraries
   :enabled: false
 
   # report when an exception is raised and caught by an exception tracker
