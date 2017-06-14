@@ -76,7 +76,7 @@ RSpec.describe InstrumentalReporters do
       agent = InstrumentalReporters.agent
       agent.stub(:gauge)
       agent.should_receive(:gauge).with("cache.command", anything)
-      client.get("foo")
+      client.get("foo-#{rand(100_000)}")
     end
 
     # Why is this fuckshow? In Rails 4x, we're going to load the
