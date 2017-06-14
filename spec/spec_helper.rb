@@ -1,7 +1,11 @@
+ENV["RAILS_ENV"] = "test"
+
 require "bundler/setup"
+Bundler.require(:default)
 require "instrumental_reporters"
 require "gemika"
 require "byebug"
+
 
 Dir["#{File.dirname(__FILE__)}/support/*.rb"].sort.each {|f| require f}
 

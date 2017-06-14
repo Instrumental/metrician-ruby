@@ -5,7 +5,7 @@ gem 'rails', '~>5.0.0'
 
 # Differentiated development dependencies
 gem 'pg', '~>0.18.4'
-gem 'sidekiq', require: false
+gem 'sidekiq', require: 'sidekiq/testing'
 gem 'rspec', '~>3.5'
 
 # Development dependencies

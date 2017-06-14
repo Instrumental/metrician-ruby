@@ -1,4 +1,5 @@
 class TestSidekiqWorker
+  include Sidekiq::Worker
 
   def perform(options = {})
     return if options["success"]

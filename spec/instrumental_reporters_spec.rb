@@ -75,12 +75,11 @@ RSpec.describe InstrumentalReporters do
 
     describe "sidekiq" do
       before do
-        require "sidekiq"
-        require 'sidekiq/testing'
         Sidekiq::Testing.inline!
         InstrumentalReporters.activate
-        # sidekiq doesn't use middleware by default in their testing
+        # sidekiq doesn't use middleware by design in their testing
         # harness, so we add it just as metrician does
+        # https://github.com/mperham/sidekiq/wiki/Testing#testing-server-middleware
         Sidekiq::Testing.server_middleware do |chain|
           chain.add Instrumental::SidekiqMiddleware
         end
@@ -93,7 +92,6 @@ RSpec.describe InstrumentalReporters do
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
-        TestSidekiqWorker.send(:include, Sidekiq::Worker)
         TestSidekiqWorker.perform_async({ "success" => true})
       end
 
@@ -103,7 +101,6 @@ RSpec.describe InstrumentalReporters do
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
-        TestSidekiqWorker.send(:include, Sidekiq::Worker)
         lambda { TestSidekiqWorker.perform_async({ "error" => true}) }.should raise_error(StandardError)
       end
     end
