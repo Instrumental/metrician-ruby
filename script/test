@@ -15,9 +15,17 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
 done
 
 if [ $success == "true" ]; then
-  echo "Passed"
+  tput bold    # bold text
+  tput setaf 2 # green text
+  echo "======================================"
+  echo "               Passed"
+  echo "======================================"
+  tput sgr0    # reset to default text
 else
+  tput bold    # bold text
+  tput setaf 2 # red text
   echo "======================================"
-  echo "FAILED"
+  echo "               FAILED"
   echo "======================================"
+  tput sgr0    # reset to default text
 fi

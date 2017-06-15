@@ -8,20 +8,14 @@ module Instrumental
           block.call(job)
         ensure
           duration = Time.now - start
-          InstrumentalReporters.agent.gauge(job_metric_instrumentation_name(job), duration)
+          InstrumentalReporters.gauge("queue.process", duration) if InstrumentalReporters.configuration[:queue][:process][:enabled]
+          InstrumentalReporters.gauge("#{job_metric_instrumentation_name(worker)}.process", duration) if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
         end
       end
 
-      lifecycle.after(:invoke_job) do |job|
-        InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.success")
-      end
-
-      lifecycle.after(:failure) do |job|
-        InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.fail")
-      end
-
       lifecycle.after(:error) do |job|
-        InstrumentalReporters.agent.increment("#{job_metric_instrumentation_name(job)}.error")
+        InstrumentalReporters.increment("queue.error") if InstrumentalReporters.configuration[:queue][:error][:enabled]
+        InstrumentalReporters.increment("#{job_metric_instrumentation_name(worker)}.error") if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
       end
     end
 

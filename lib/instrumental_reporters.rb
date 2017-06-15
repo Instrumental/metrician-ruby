@@ -1,3 +1,4 @@
+require "instrumental/configuration"
 require "instrumental/reporter"
 require "instrumental_agent"
 require "instrumental_reporters/railtie" if defined?(Rails)
@@ -25,6 +26,10 @@ module InstrumentalReporters
     agent.logger = logger
   end
 
+  def self.logger
+    agent.logger
+  end
+
   def self.dotify(klass)
     klass.to_s.underscore.gsub(%r{/}, ".")
   end
@@ -49,4 +54,7 @@ module InstrumentalReporters
     prefixed? ? agent.gauge("#{prefix}#{metric}", value) : agent.gauge(metric, value)
   end
 
+  def self.configuration
+    @configuration ||= Instrumental::Configuration.load
+  end
 end

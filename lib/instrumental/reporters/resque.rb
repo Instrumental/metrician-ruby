@@ -2,7 +2,8 @@ module Instrumental
   class Resque < Reporter
 
     def self.enabled?
-      !!defined?(::Resque)
+      !!defined?(::Resque) &&
+        InstrumentalReporters.configuration[:queue][:enabled]
     end
 
     def instrument

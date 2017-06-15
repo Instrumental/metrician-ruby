@@ -9,7 +9,7 @@ rvm:
   - 2.4.0
 
 gemfile:
-  - gemfiles/Gemfile.4.2.mysql2
+  - gemfiles/Gemfile.4.2.sidekiq-4
   - gemfiles/Gemfile.5.0.pg
 
 matrix:
@@ -28,3 +28,9 @@ notifications:
     - developers@expectedbehavior.com
 
 script: bundle exec rake current_rspec
+
+services:
+  - mysql
+  - postgresql
+  - redis-server
+  - memcached

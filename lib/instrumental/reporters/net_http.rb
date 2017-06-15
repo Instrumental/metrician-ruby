@@ -1,9 +1,11 @@
-require 'net/http'
+require "net/http"
+
 module Instrumental
   class NetHttp < Reporter
 
     def self.enabled?
-      true
+      !!defined?(Net::HTTP) &&
+        InstrumentalReporters.configuration[:external_service][:enabled]
     end
 
     def instrument
@@ -14,7 +16,7 @@ module Instrumental
           begin
             request_without_instrumental_trace(req, body, &block)
           ensure
-            InstrumentalReporters.gauge("service.request", (Time.now - start_time).to_f)
+            InstrumentalReporters.gauge("service.request", (Time.now - start_time).to_f) if InstrumentalReporters.configuration[:external_service][:request][:enabled]
           end
         end
         alias_method :request_without_instrumental_trace, :request
