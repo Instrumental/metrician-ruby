@@ -115,11 +115,14 @@ RSpec.describe InstrumentalReporters do
       client.get("foo-#{rand(100_000)}")
     end
 
-    [
-      defined?(::Memcached) && ::Memcached.new("localhost:11211"),
-      defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
-    ].compact.each do |client|
-      specify "memcached is instrumented" do
+    memcached_clients = [
+        defined?(::Memcached) && ::Memcached.new("localhost:11211"),
+        defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
+    ].compact
+    raise "no memcached client" if memcached_clients.empty?
+
+    memcached_clients.each do |client|
+      specify "memcached is instrumented (#{client.class.name})" do
         InstrumentalReporters.activate
 
         agent = InstrumentalReporters.agent
