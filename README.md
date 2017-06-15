@@ -4,6 +4,12 @@ Automatically get metrics for [Instrumental](https://instrumentalapp.com) from y
 
 [![Build Status](https://travis-ci.org/Instrumental/instrumental_reporters.svg?branch=master)](https://travis-ci.org/Instrumental/instrumental_reporters)
 
+## Remodel in Progress
+
+We are actively re-writing and changing this library right now. Please understand that if you are using this right now you are probably in for some changes to both your metrics being reported and other weirdness.
+
+<img src="http://www.reconnecthdi.org/home/images/Under%20construction.png" />
+
 ## Automatic Metrics For Ruby
 
 Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcache, Dalli, Delayed Job and generic method tracing.
