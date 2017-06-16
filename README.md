@@ -1,8 +1,8 @@
-# Instrumental Reporters
+# Metrician
 
-Automatically get metrics for [Instrumental](https://instrumentalapp.com) from your Ruby application.
+Automatically get metrics for [Instrumental](https://instrumentalapp.com) from your Ruby on Rails (RoR) application.
 
-[![Build Status](https://travis-ci.org/Instrumental/instrumental_reporters.svg?branch=master)](https://travis-ci.org/Instrumental/instrumental_reporters)
+[![Build Status](https://travis-ci.org/Instrumental/metrician.svg?branch=master)](https://travis-ci.org/Instrumental/metrician)
 
 ## Remodel in Progress
 
@@ -12,20 +12,20 @@ We are actively re-writing and changing this library right now. Please understan
 
 ## Automatic Metrics For Ruby
 
-Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcache, Dalli, Delayed Job and generic method tracing.
+Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcached, Dalli, Delayed Job, Sidekiq, Resque, Honeybadger, and generic method tracing.
 
-Activate automatically via:
-
-```
-InstrumentalReporters.activate(YOUR_API_KEY)
-```
-
-Alternatively, you can initialize your Agent manually and assign it like so:
+Grab your project token from [https://instrumentalapp.com/docs/tokens](https://instrumentalapp.com/docs/tokens) and activate automatically via:
 
 ```
-agent = Instrumental::Agent.new
-InstrumentalReporters.agent = agent
-InstrumentalReporters.activate
+Metrician.activate(PROJECT_TOKEN)
+```
+
+If you're already using our agent, you can initialize your Agent manually and assign it like so:
+
+```
+agent = Instrumental::Agent.new(PROJECT_TOKEN)
+Metrician.agent = agent
+Metrician.activate
 ```
 
 

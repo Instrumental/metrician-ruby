@@ -1,4 +1,4 @@
-module Instrumental
+module Metrician
 
   class MethodTracer < Reporter
 
@@ -37,7 +37,7 @@ module Instrumental
           begin
             #{untraced_name}(*args, &block)
           ensure
-            InstrumentalReporters.gauge("#{metric_name}", (Time.now - start_time).to_f)
+            Metrician.gauge("#{metric_name}", (Time.now - start_time).to_f)
           end
         end
         alias :#{untraced_name} :#{method_name}
@@ -46,15 +46,15 @@ module Instrumental
       EOD
     end
 
-    def add_instrumental_method_tracer(method_name, metric_name = nil)
+    def add_metrician_method_tracer(method_name, metric_name = nil)
       return false unless TracingMethodInterceptor.traceable_method?(self, method_name)
 
       is_klass_method = methods.include?(method_name.to_s)
-      traced_name = "with_instrumental_trace_#{method_name}"
+      traced_name = "with_metrician_trace_#{method_name}"
       return false if TracingMethodInterceptor.already_traced_method?(self, is_klass_method, traced_name)
 
       metric_name ||= TracingMethodInterceptor.default_metric_name(self, is_klass_method, method_name)
-      untraced_name = "without_instrumental_trace_#{method_name}"
+      untraced_name = "without_metrician_trace_#{method_name}"
 
       traced_method_code =
         TracingMethodInterceptor.code_to_eval(is_klass_method, method_name, traced_name,

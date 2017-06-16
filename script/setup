@@ -22,10 +22,16 @@ rbenv which ruby >/dev/null 2>&1 || (brew upgrade ruby-build || true; rbenv inst
 eval "$(rbenv init - --no-rehash)"
 
 if [ ! -e Gemfile ]; then
+  tput bold    # bold text
+  tput setaf 2 # red text
   echo "Gemfile symlink is broken. Should point to a known good Gemfile-x variant in ./gemfiles"
+  tput sgr0    # reset to default text
   exit 199
 elif [ ! -e Gemfile.lock ]; then
+  tput bold    # bold text
+  tput setaf 2 # red text
   echo "Gemfile.lock symlink is broken. Should point to a known good Gemfile-x.lock variant in ./gemfiles"
+  tput sgr0    # reset to default text
   exit 200
 fi
 
@@ -40,21 +46,27 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
   rake matrix:install
 done
 
-if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'instrumental_reporters_test'" | grep -q 1; then
-  psql -c 'create database instrumental_reporters_test;' postgres
+if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'metrician_test'" | grep -q 1; then
+  psql -c 'create database metrician_test;' postgres
 fi
-mysql -e 'create database IF NOT EXISTS instrumental_reporters_test;' -u root
+mysql -e 'create database IF NOT EXISTS metrician_test;' -u root
 
 if [ ! -f spec/support/database.yml ]; then
+  tput bold    # bold text
+  tput setaf 2 # red text
   echo "spec/support/database.yml doesn't exist, run:"
   echo "  cp spec/support/database.sample.yml spec/support/database.yml"
   echo
   echo "and update the credentials to match your system"
+  tput sgr0    # reset to default text
 else
+  tput bold    # bold text
+  tput setaf 2 # green text
   echo "****************************************************************"
   echo "*                                                              *"
   echo "*                         Good to go!                          *"
   echo "*                                                              *"
   echo "****************************************************************"
+  tput sgr0    # reset to default text
 fi
 

@@ -1,17 +1,17 @@
-module Instrumental
+module Metrician
   class SidekiqMiddleware
 
     def call(worker, _msg, _queue)
       start = Time.now
       yield
     rescue
-      InstrumentalReporters.increment("queue.error") if InstrumentalReporters.configuration[:queue][:error][:enabled]
-      InstrumentalReporters.increment("#{job_metric_instrumentation_name(worker)}.error") if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
+      Metrician.increment("queue.error") if Metrician.configuration[:queue][:error][:enabled]
+      Metrician.increment("#{job_metric_instrumentation_name(worker)}.error") if Metrician.configuration[:queue][:job_specific][:enabled]
       raise
     ensure
       duration = Time.now - start
-      InstrumentalReporters.gauge("queue.process", duration) if InstrumentalReporters.configuration[:queue][:process][:enabled]
-      InstrumentalReporters.gauge("#{job_metric_instrumentation_name(worker)}.process", duration) if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
+      Metrician.gauge("queue.process", duration) if Metrician.configuration[:queue][:process][:enabled]
+      Metrician.gauge("#{job_metric_instrumentation_name(worker)}.process", duration) if Metrician.configuration[:queue][:job_specific][:enabled]
     end
 
     def job_metric_instrumentation_name(worker)

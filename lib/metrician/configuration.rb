@@ -1,6 +1,6 @@
 require "yaml"
 
-module Instrumental
+module Metrician
   class Configuration
     FileMissing = Class.new(StandardError)
 

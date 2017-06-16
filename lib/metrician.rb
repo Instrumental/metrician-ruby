@@ -1,13 +1,15 @@
-require "instrumental/configuration"
-require "instrumental/reporter"
+require "metrician/configuration"
+require "metrician/reporter"
 require "instrumental_agent"
-require "instrumental_reporters/railtie" if defined?(Rails)
+require "metrician/railtie" if defined?(Rails)
 
-module InstrumentalReporters
+module Metrician
 
   def self.activate(api_key = nil)
-    self.agent = Instrumental::Agent.new(api_key) if api_key
-    Instrumental::Reporter.all.each(&:instrument)
+    if api_key
+      self.agent = Instrumental::Agent.new(api_key)
+    end
+    Metrician::Reporter.all.each(&:instrument)
   end
 
   def self.agent=(instrumental_agent)
@@ -55,6 +57,6 @@ module InstrumentalReporters
   end
 
   def self.configuration
-    @configuration ||= Instrumental::Configuration.load
+    @configuration ||= Metrician::Configuration.load
   end
 end

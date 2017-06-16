@@ -1,14 +1,14 @@
-module Instrumental
+module Metrician
   class Resque < Reporter
 
     def self.enabled?
       !!defined?(::Resque) &&
-        InstrumentalReporters.configuration[:queue][:enabled]
+        Metrician.configuration[:queue][:enabled]
     end
 
     def instrument
       require "resque/resque_plugin"
-      ::Resque::Job.send(:extend, Instrumental::ResquePlugin)
+      ::Resque::Job.send(:extend, Metrician::ResquePlugin)
     end
 
   end

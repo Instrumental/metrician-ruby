@@ -20,4 +20,4 @@ gem 'memcached'
 gem 'rack-test'
 
 # Gem under test
-gem 'instrumental_reporters', :path => '..'
+gem 'metrician', :path => '..'

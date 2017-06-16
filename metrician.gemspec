@@ -1,9 +1,9 @@
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
-require "instrumental_reporters/version"
+require "metrician/version"
 
 Gem::Specification.new do |s|
-  s.name        = "instrumental_reporters"
-  s.version     = InstrumentalReporters::VERSION
+  s.name        = "metrician"
+  s.version     = Metrician::VERSION
   s.authors     = ["Expected Behavior"]
   s.email       = ["support@instrumentalapp.com"]
   s.homepage    = "http://instrumentalapp.com/"

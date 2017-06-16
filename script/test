@@ -18,14 +18,14 @@ if [ $success == "true" ]; then
   tput bold    # bold text
   tput setaf 2 # green text
   echo "======================================"
-  echo "               Passed"
+  echo "=              Passed                ="
   echo "======================================"
   tput sgr0    # reset to default text
 else
   tput bold    # bold text
   tput setaf 2 # red text
   echo "======================================"
-  echo "               FAILED"
+  echo "=              FAILED                ="
   echo "======================================"
   tput sgr0    # reset to default text
 fi
