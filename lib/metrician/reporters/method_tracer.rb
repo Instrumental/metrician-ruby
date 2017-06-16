@@ -3,7 +3,7 @@ module Metrician
   class MethodTracer < Reporter
 
     def self.enabled?
-      true
+      Metrician.configuration[:method_tracer][:enabled]
     end
 
     def instrument
@@ -21,12 +21,15 @@ module Metrician
     end
 
     def self.traceable_method?(klass, method_name)
-      klass.method_defined?(method_name) || klass.private_method_defined?(method_name) ||
+      klass.method_defined?(method_name) ||
+        klass.private_method_defined?(method_name) ||
         klass.methods.include?(method_name.to_s)
     end
 
     def self.already_traced_method?(klass, is_klass_method, traced_name)
-      is_klass_method ? klass.methods.include?(traced_name) : klass.method_defined?(traced_name)
+      is_klass_method ?
+        klass.methods.include?(traced_name) :
+        klass.method_defined?(traced_name)
     end
 
     def self.code_to_eval(is_klass_method, method_name, traced_name, untraced_name, metric_name)
