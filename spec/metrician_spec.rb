@@ -116,17 +116,17 @@ RSpec.describe Metrician do
     end
 
     memcached_clients = [
-        defined?(::Memcached) && ::Memcached.new("localhost:11211"),
-        defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
+      defined?(::Memcached) && ::Memcached.new("localhost:11211"),
+      defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
     ].compact
     raise "no memcached client" if memcached_clients.empty?
 
     memcached_clients.each do |client|
       specify "memcached is instrumented (#{client.class.name})" do
         Metrician.activate
-
         agent = Metrician.agent
         agent.stub(:gauge)
+
         agent.should_receive(:gauge).with("cache.command", anything)
         begin
           client.get("foo-#{rand(100_000)}")
@@ -140,9 +140,9 @@ RSpec.describe Metrician do
   describe "external service timing" do
     specify "Net::HTTP is instrumented" do
       Metrician.activate
-
       agent = Metrician.agent
       agent.stub(:gauge)
+
       agent.should_receive(:gauge).with("service.request", anything)
       Net::HTTP.get(URI.parse("http://example.com/"))
     end
@@ -165,8 +165,8 @@ RSpec.describe Metrician do
       specify "Rack timing is instrumented" do
         agent = Metrician.agent
         agent.stub(:gauge)
-        agent.should_receive(:gauge).with("web.request", anything)
 
+        agent.should_receive(:gauge).with("web.request", anything)
         get "/"
       end
     end
@@ -186,11 +186,84 @@ RSpec.describe Metrician do
         agent = Metrician.agent
         agent.stub(:gauge)
         agent.stub(:increment)
+
         agent.should_receive(:gauge).with("web.request", anything)
         agent.should_receive(:increment).with("web.error", 1)
-
         get "/"
       end
+    end
+
+    describe "apdex" do
+      describe "fast" do
+        def app
+          require "middleware/request_timing"
+          require "middleware/application_timing"
+          Rack::Builder.app do
+            use Metrician::RequestTiming
+            use Metrician::ApplicationTiming
+            run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
+          end
+        end
+
+        specify "satisfied is recorded" do
+          agent = Metrician.agent
+          agent.stub(:gauge)
+
+          agent.should_receive(:gauge).with("web.apdex.satisfied", anything)
+          agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
+          get "/"
+        end
+
+      end
+
+      describe "medium" do
+        def app
+          require "middleware/request_timing"
+          require "middleware/application_timing"
+          Rack::Builder.app do
+            use Metrician::RequestTiming
+            use Metrician::ApplicationTiming
+            run ->(env) {
+              env["REQUEST_TOTAL_TIME"] = 3.0 # LOAD-BEARING
+              [200, {'Content-Type' => 'text/plain'}, ['OK']]
+            }
+          end
+        end
+
+        specify "tolerated is recorded" do
+          agent = Metrician.agent
+          agent.stub(:gauge)
+
+          agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
+          agent.should_receive(:gauge).with("web.apdex.tolerated", anything)
+          get "/"
+        end
+      end
+
+      describe "slow" do
+        def app
+          require "middleware/request_timing"
+          require "middleware/application_timing"
+          Rack::Builder.app do
+            use Metrician::RequestTiming
+            use Metrician::ApplicationTiming
+            run ->(env) {
+              env["REQUEST_TOTAL_TIME"] = 28.0 # LOAD-BEARING
+              [200, {'Content-Type' => 'text/plain'}, ['OK']]
+            }
+          end
+        end
+
+        specify "apdex is not recorded for transactions" do
+          agent = Metrician.agent
+          agent.stub(:gauge)
+
+          agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
+          agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
+          get "/"
+        end
+      end
+
     end
   end
 end

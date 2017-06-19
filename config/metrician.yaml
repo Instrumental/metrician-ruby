@@ -37,6 +37,16 @@
   :route_tracking:
     :enabled: false
 
+  # "apdex" controls the recording of metrics to measure apdex
+  # More here: https://en.wikipedia.org/wiki/Apdex
+  # Note this requires "request" tracking to be enabled
+  :apdex:
+    :enabled: true
+
+    # set the threshold, in ms, above which a request is no longer
+    # considered "sasifactory". The "tolerates" threshold will be
+    # 4x this number.
+    :satisfied_threshold: 2500
 
 # "database" settings control ActiveRecord metric reporting features
 :database:

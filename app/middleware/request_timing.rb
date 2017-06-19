@@ -36,7 +36,7 @@ module Metrician
         request_time = env["REQUEST_TOTAL_TIME"].to_f
         env["REQUEST_TOTAL_TIME"] = nil
         gauge("request", request_time, current_route)
-
+        apdex(request_time)
         increment("error", current_route) if status >= 500
 
         # Note that 30xs don't have content-length, so cached
@@ -65,6 +65,20 @@ module Metrician
       Metrician.increment("web.#{kind}")
       if route && configuration[:route_tracking][:enabled]
         Metrician.increment("web.#{kind}.#{route}")
+      end
+    end
+
+    def apdex(request_time)
+      return unless configuration[:apdex][:enabled]
+
+      satisfied_threshold = configuration[:apdex][:satisfied_threshold].to_f / 1000
+      tolerated_threshold = satisfied_threshold * 4
+
+      case
+      when request_time <= satisfied_threshold
+        Metrician.gauge("web.apdex.satisfied", request_time)
+      when request_time <= tolerated_threshold
+        Metrician.gauge("web.apdex.tolerated", request_time)
       end
     end
 
