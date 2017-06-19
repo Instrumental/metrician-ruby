@@ -201,6 +201,8 @@ RSpec.describe Metrician do
           Rack::Builder.app do
             use Metrician::RequestTiming
             use Metrician::ApplicationTiming
+            # This SHOULD be fast enough to fit under our
+            # default threshold of 2.5s :)
             run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
           end
         end
