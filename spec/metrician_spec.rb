@@ -213,6 +213,7 @@ RSpec.describe Metrician do
 
           agent.should_receive(:gauge).with("web.apdex.satisfied", anything)
           agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
+          agent.should_not_receive(:gauge).with("web.apdex.frustrated", anything)
           get "/"
         end
 
@@ -238,6 +239,7 @@ RSpec.describe Metrician do
 
           agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
           agent.should_receive(:gauge).with("web.apdex.tolerated", anything)
+          agent.should_not_receive(:gauge).with("web.apdex.frustrated", anything)
           get "/"
         end
       end
@@ -256,12 +258,13 @@ RSpec.describe Metrician do
           end
         end
 
-        specify "apdex is not recorded for transactions" do
+        specify "frustrated is recorded" do
           agent = Metrician.agent
           agent.stub(:gauge)
 
           agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
           agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
+          agent.should_receive(:gauge).with("web.apdex.frustrated", anything)
           get "/"
         end
       end

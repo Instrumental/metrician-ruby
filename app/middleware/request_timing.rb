@@ -79,6 +79,8 @@ module Metrician
         Metrician.gauge("web.apdex.satisfied", request_time)
       when request_time <= tolerated_threshold
         Metrician.gauge("web.apdex.tolerated", request_time)
+      else
+        Metrician.gauge("web.apdex.frustrated", request_time)
       end
     end
 
