@@ -5,19 +5,18 @@ module Metrician
       start = Time.now
       yield
     rescue
-      Metrician.increment("queue.error") if Metrician.configuration[:queue][:error][:enabled]
-      Metrician.increment("#{job_metric_instrumentation_name(worker)}.error") if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.increment("jobs.error") if Metrician.configuration[:jobs][:error][:enabled]
+      Metrician.increment("jobs.error.#{job_metric_instrumentation_name(worker)}") if Metrician.configuration[:jobs][:job_specific][:enabled]
       raise
     ensure
       duration = Time.now - start
-      Metrician.gauge("queue.process", duration) if Metrician.configuration[:queue][:process][:enabled]
-      Metrician.gauge("#{job_metric_instrumentation_name(worker)}.process", duration) if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.gauge("jobs.run", duration) if Metrician.configuration[:jobs][:run][:enabled]
+      Metrician.gauge("jobs.run.#{job_metric_instrumentation_name(worker)}", duration) if Metrician.configuration[:jobs][:job_specific][:enabled]
     end
 
     def job_metric_instrumentation_name(worker)
       # remove all #, ?, !, etc. as well as runs of . and ending .'s
-      name = worker.class.name.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
-      "queue.#{name}"
+      worker.class.name.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
     end
 
   end

@@ -3,7 +3,7 @@ module Metrician
 
     def self.enabled?
       !!defined?(::Sidekiq) &&
-        Metrician.configuration[:queue][:enabled]
+        Metrician.configuration[:jobs][:enabled]
     end
 
     def instrument
