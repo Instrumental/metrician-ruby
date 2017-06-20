@@ -71,7 +71,7 @@ module Metrician
     def apdex(request_time)
       return unless configuration[:apdex][:enabled]
 
-      satisfied_threshold = configuration[:apdex][:satisfied_threshold].to_f / 1000
+      satisfied_threshold = configuration[:apdex][:satisfied_threshold]
       tolerated_threshold = satisfied_threshold * 4
 
       case
