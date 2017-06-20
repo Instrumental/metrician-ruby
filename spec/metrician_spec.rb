@@ -39,6 +39,15 @@ RSpec.describe Metrician do
         Delayed::Job.enqueue(TestDelayedJob.new(error: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
+
+      specify "per job instrumentation" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:gauge)
+
+        @agent.should_receive(:gauge).with("jobs.task.TestDelayedJob", anything)
+        Delayed::Job.enqueue(TestDelayedJob.new(success: true))
+        Delayed::Worker.new(exit_on_complete: true).start
+      end
     end
 
     describe "resque" do
