@@ -17,7 +17,7 @@ RSpec.describe Metrician do
     end
   end
 
-  describe "job queue systems" do
+  describe "job systems" do
     describe "delayed_job" do
       before do
         Metrician.activate
@@ -26,17 +26,26 @@ RSpec.describe Metrician do
 
       specify "DelayedJob is instrumented" do
         @agent.stub(:gauge)
-        @agent.should_receive(:gauge).with("queue.process", anything)
 
+        @agent.should_receive(:gauge).with("jobs.run", anything)
         Delayed::Job.enqueue(TestDelayedJob.new(success: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("queue.error", 1)
 
+        @agent.should_receive(:increment).with("jobs.error", 1)
         Delayed::Job.enqueue(TestDelayedJob.new(error: true))
+        Delayed::Worker.new(exit_on_complete: true).start
+      end
+
+      specify "per job instrumentation" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:gauge)
+
+        @agent.should_receive(:gauge).with("jobs.run.job.TestDelayedJob", anything)
+        Delayed::Job.enqueue(TestDelayedJob.new(success: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
     end
@@ -50,7 +59,7 @@ RSpec.describe Metrician do
 
       specify "Resque is instrumented" do
         @agent.stub(:gauge)
-        @agent.should_receive(:gauge).with("queue.process", anything)
+        @agent.should_receive(:gauge).with("jobs.run", anything)
 
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
@@ -61,7 +70,7 @@ RSpec.describe Metrician do
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("queue.error", 1)
+        @agent.should_receive(:increment).with("jobs.error", 1)
 
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
@@ -86,7 +95,7 @@ RSpec.describe Metrician do
 
       specify "Sidekiq is instrumented" do
         @agent.stub(:gauge)
-        @agent.should_receive(:gauge).with("queue.process", anything)
+        @agent.should_receive(:gauge).with("jobs.run", anything)
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
@@ -95,7 +104,7 @@ RSpec.describe Metrician do
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("queue.error", 1)
+        @agent.should_receive(:increment).with("jobs.error", 1)
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time

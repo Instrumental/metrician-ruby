@@ -78,15 +78,15 @@
     :enabled: true
 
 
-# "queue" settings control reporting metrics when ruby job systems
-# work through their job queues
-:queue:
+# "jobs" settings control reporting metrics when ruby job systems
+# work through their queues
+:jobs:
 
   # hook into job system middleware when presence detected
   :enabled: true
 
   # record the basic timing of every job
-  :process:
+  :run:
     :enabled: true
 
   # record when an error occurs in the a job

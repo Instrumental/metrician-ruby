@@ -9,14 +9,14 @@ module Metrician
       yield
     ensure
       duration = Time.now - start
-      Metrician.gauge("queue.process", duration) if Metrician.configuration[:queue][:process][:enabled]
-      Metrician.gauge("#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}.process", duration) if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.gauge("jobs.run", duration) if Metrician.configuration[:jobs][:run][:enabled]
+      Metrician.gauge("jobs.run.job.#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}", duration) if Metrician.configuration[:jobs][:job_specific][:enabled]
       Metrician.agent.cleanup
     end
 
     def on_failure_with_metrician(_e, *_args)
-      Metrician.increment("queue.error") if Metrician.configuration[:queue][:error][:enabled]
-      Metrician.increment("#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}.error") if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.increment("jobs.error") if Metrician.configuration[:jobs][:error][:enabled]
+      Metrician.increment("jobs.error.job.#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}") if Metrician.configuration[:jobs][:job_specific][:enabled]
       Metrician.agent.cleanup
     end
 
@@ -28,8 +28,7 @@ module Metrician
 
     def self.job_metric_instrumentation_name(job)
       # remove all #, ?, !, etc. as well as runs of . and ending .'s
-      name = job.to_s.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
-      "queue.#{name}"
+      job.to_s.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
     end
 
   end
