@@ -2,7 +2,7 @@ ENV["RAILS_ENV"] = "test"
 
 require "bundler/setup"
 Bundler.require(:default)
-require "instrumental_reporters"
+require "metrician"
 require "gemika"
 require "byebug"
 

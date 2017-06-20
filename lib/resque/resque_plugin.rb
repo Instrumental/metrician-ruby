@@ -1,26 +1,26 @@
 # Reference materials:
 # https://github.com/resque/resque/blob/master/docs/HOOKS.md
-module Instrumental
+module Metrician
 
   module ResquePlugin
 
-    def around_perform_with_instrumental(*_args)
+    def around_perform_with_metrician(*_args)
       start = Time.now
       yield
     ensure
       duration = Time.now - start
-      InstrumentalReporters.gauge("queue.process", duration) if InstrumentalReporters.configuration[:queue][:process][:enabled]
-      InstrumentalReporters.gauge("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.process", duration) if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
-      InstrumentalReporters.agent.cleanup
+      Metrician.gauge("queue.process", duration) if Metrician.configuration[:queue][:process][:enabled]
+      Metrician.gauge("#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}.process", duration) if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.agent.cleanup
     end
 
-    def on_failure_with_instrumental(_e, *_args)
-      InstrumentalReporters.increment("queue.error") if InstrumentalReporters.configuration[:queue][:error][:enabled]
-      InstrumentalReporters.increment("#{Instrumental::ResqueHelper.job_metric_instrumentation_name(self)}.error") if InstrumentalReporters.configuration[:queue][:job_specific][:enabled]
-      InstrumentalReporters.agent.cleanup
+    def on_failure_with_metrician(_e, *_args)
+      Metrician.increment("queue.error") if Metrician.configuration[:queue][:error][:enabled]
+      Metrician.increment("#{Metrician::ResqueHelper.job_metric_instrumentation_name(self)}.error") if Metrician.configuration[:queue][:job_specific][:enabled]
+      Metrician.agent.cleanup
     end
 
-    ::Resque.before_fork = proc { InstrumentalReporters.agent.cleanup }
+    ::Resque.before_fork = proc { Metrician.agent.cleanup }
 
   end
 

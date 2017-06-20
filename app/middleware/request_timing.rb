@@ -1,4 +1,4 @@
-module Instrumental
+module Metrician
   # RequestTiming and ApplicationTiming work in concert to time the middleware
   # separate from the request processing. RequestTiming should be the first
   # or near first middleware loaded since it will be timing from the moment
@@ -54,22 +54,22 @@ module Instrumental
 
     def gauge(kind, value, route = nil)
       return unless configuration[kind.to_sym][:enabled]
-      InstrumentalReporters.gauge("web.#{kind}", value)
+      Metrician.gauge("web.#{kind}", value)
       if route && configuration[:route_tracking][:enabled]
-        InstrumentalReporters.gauge("web.#{kind}.#{route}", value)
+        Metrician.gauge("web.#{kind}.#{route}", value)
       end
     end
 
     def increment(kind, route = nil)
       return unless configuration[kind.to_sym][:enabled]
-      InstrumentalReporters.increment("web.#{kind}")
+      Metrician.increment("web.#{kind}")
       if route && configuration[:route_tracking][:enabled]
-        InstrumentalReporters.increment("web.#{kind}.#{route}")
+        Metrician.increment("web.#{kind}.#{route}")
       end
     end
 
     def configuration
-      InstrumentalReporters.configuration[:request_timing]
+      Metrician.configuration[:request_timing]
     end
 
     def self.extract_request_start_time(env)
@@ -82,7 +82,7 @@ module Instrumental
         return "assets" if path =~ %r|\A/{0,2}/assets|
         return "unknown_endpoint"
       end
-      controller_name = InstrumentalReporters.dotify(controller.class)
+      controller_name = Metrician.dotify(controller.class)
       action_name     = controller.action_name.blank? ? "unknown_action" : controller.action_name
       method_name     = controller.request.request_method.to_s
       "#{controller_name}.#{action_name}.#{method_name}".downcase
