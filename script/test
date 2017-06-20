@@ -4,13 +4,18 @@ cd "$(dirname "$0")/.."
 
 eval "$(rbenv init - --no-rehash)"
 
+rspec_file_line="$1"
+if [[ "$rspec_file_line" != "" ]]; then
+  rspec_file_line="[${rspec_file_line}]"
+fi
+
 success="true"
 
 for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["rvm"].join(" ")'`; do
   {
     echo "testing rub version $ruby_version" &&
       rbenv shell $ruby_version &&
-      bundle exec rake matrix:spec
+      bundle exec rake matrix:spec${rspec_file_line}
   } || success="false"
 done
 
