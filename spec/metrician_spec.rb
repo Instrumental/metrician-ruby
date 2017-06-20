@@ -44,7 +44,7 @@ RSpec.describe Metrician do
         Metrician.configuration[:jobs][:job_specific][:enabled] = true
         @agent.stub(:gauge)
 
-        @agent.should_receive(:gauge).with("jobs.run.TestDelayedJob", anything)
+        @agent.should_receive(:gauge).with("jobs.run.job.TestDelayedJob", anything)
         Delayed::Job.enqueue(TestDelayedJob.new(success: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end

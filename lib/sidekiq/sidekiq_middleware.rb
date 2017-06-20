@@ -6,12 +6,12 @@ module Metrician
       yield
     rescue
       Metrician.increment("jobs.error") if Metrician.configuration[:jobs][:error][:enabled]
-      Metrician.increment("jobs.error.#{job_metric_instrumentation_name(worker)}") if Metrician.configuration[:jobs][:job_specific][:enabled]
+      Metrician.increment("jobs.error.job.#{job_metric_instrumentation_name(worker)}") if Metrician.configuration[:jobs][:job_specific][:enabled]
       raise
     ensure
       duration = Time.now - start
       Metrician.gauge("jobs.run", duration) if Metrician.configuration[:jobs][:run][:enabled]
-      Metrician.gauge("jobs.run.#{job_metric_instrumentation_name(worker)}", duration) if Metrician.configuration[:jobs][:job_specific][:enabled]
+      Metrician.gauge("jobs.run.job.#{job_metric_instrumentation_name(worker)}", duration) if Metrician.configuration[:jobs][:job_specific][:enabled]
     end
 
     def job_metric_instrumentation_name(worker)
