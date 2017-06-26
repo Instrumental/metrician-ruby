@@ -3,12 +3,12 @@ module Metrician
 
     def self.enabled?
       !!defined?(::Resque) &&
-        Metrician.configuration[:jobs][:enabled]
+        Metrician::Jobs.enabled?
     end
 
     def instrument
-      require "resque/resque_plugin"
-      ::Resque::Job.send(:extend, Metrician::ResquePlugin)
+      require "metrician/jobs/resque_plugin"
+      ::Resque::Job.send(:extend, Metrician::Jobs::ResquePlugin)
     end
 
   end

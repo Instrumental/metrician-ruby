@@ -64,7 +64,7 @@ RSpec.describe Metrician do
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
         # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::ResquePlugin)
+        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
         Resque.enqueue(TestResqueJob, { "success" => true })
       end
 
@@ -75,7 +75,7 @@ RSpec.describe Metrician do
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
         # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::ResquePlugin)
+        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
         lambda { Resque.enqueue(TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
       end
     end
