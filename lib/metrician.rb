@@ -37,14 +37,17 @@ module Metrician
     klass.to_s.underscore.gsub(%r{/}, ".")
   end
 
+  # TODO: consider removal/movement to Instrumental Agent
   def self.prefix=(prefix)
     @prefix = prefix.to_s[-1] == "." ? prefix.to_s : "#{prefix}."
   end
 
+  # TODO: consider removal/movement to Instrumental Agent
   def self.prefix
     @prefix || ""
   end
 
+  # TODO: consider removal/movement to Instrumental Agent
   def self.prefixed?
     @prefixed ||= !prefix.empty?
   end
@@ -53,6 +56,7 @@ module Metrician
     prefixed? ? agent.increment("#{prefix}#{metric}", value) : agent.increment(metric, value)
   end
 
+  # TODO: add block form
   def self.gauge(metric, value)
     prefixed? ? agent.gauge("#{prefix}#{metric}", value) : agent.gauge(metric, value)
   end
