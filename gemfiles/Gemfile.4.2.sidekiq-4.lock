@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    metrician (1.0.0)
+    metrician (0.0.1)
       instrumental_agent
 
 GEM
