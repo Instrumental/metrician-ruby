@@ -12,3 +12,7 @@
 
 # rspec failure tracking
 .rspec_status
+
+# stupid editor tricks
+*~
+\#*
