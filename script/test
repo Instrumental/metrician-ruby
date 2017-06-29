@@ -28,7 +28,7 @@ if [ $success == "true" ]; then
   tput sgr0    # reset to default text
 else
   tput bold    # bold text
-  tput setaf 2 # red text
+  tput setaf 1 # red text
   echo "======================================"
   echo "=              FAILED                ="
   echo "======================================"
