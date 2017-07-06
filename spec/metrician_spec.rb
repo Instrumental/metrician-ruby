@@ -88,7 +88,7 @@ RSpec.describe Metrician do
         # harness, so we add it just as metrician does
         # https://github.com/mperham/sidekiq/wiki/Testing#testing-server-middleware
         Sidekiq::Testing.server_middleware do |chain|
-          chain.add Metrician::SidekiqMiddleware
+          chain.add Metrician::Jobs::SidekiqMiddleware
         end
         @agent = Metrician.agent
       end
