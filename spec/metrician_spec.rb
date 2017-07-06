@@ -5,13 +5,40 @@ RSpec.describe Metrician do
     Metrician::VERSION.should_not be nil
   end
 
-  describe "database" do
-    specify "ActiveRecord is instrumented" do
+  describe "ActiveRecord" do
+    before do
       Metrician.activate
-      agent = Metrician.agent
+      @agent = Metrician.agent
+    end
 
-      agent.stub(:gauge)
-      agent.should_receive(:gauge).with("database.query", anything)
+    specify "top level queries are instrumented" do
+      @agent.stub(:gauge)
+      @agent.should_receive(:gauge).with("database.query", anything)
+
+      User.where(name: "foobar").to_a
+    end
+
+    specify "per command instrumentation" do
+      Metrician.configuration[:database][:command] = true
+      @agent.stub(:gauge)
+      @agent.should_receive(:gauge).with("database.select", anything)
+
+      User.where(name: "foobar").to_a
+    end
+
+    specify "per table instrumentation" do
+      Metrician.configuration[:database][:table] = true
+      @agent.stub(:gauge)
+      @agent.should_receive(:gauge).with("database.users", anything)
+
+      User.where(name: "foobar").to_a
+    end
+
+    specify "per command and table instrumentation" do
+      Metrician.configuration[:database][:command] = true
+      Metrician.configuration[:database][:table] = true
+      @agent.stub(:gauge)
+      @agent.should_receive(:gauge).with("database.select.users", anything)
 
       User.where(name: "foobar").to_a
     end

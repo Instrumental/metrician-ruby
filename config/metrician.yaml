@@ -58,12 +58,11 @@
     :enabled: true
 
   # collect generic sql query information (select, update, insert, etc.)
-  :sql:
+  :command:
     :enabled: false
 
-  # collect query information for specific tables and ActiveRecord
-  # based queries (find, update, destroy)
-  :active_record:
+  # collect query information for specific tables
+  :table:
     :enabled: false
 
 

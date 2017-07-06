@@ -29,7 +29,7 @@ module Metrician
   end
 end
 
-require "metrician/reporters/database"
+require "metrician/reporters/active_record"
 require "metrician/reporters/delayed_job"
 require "metrician/reporters/honeybadger"
 require "metrician/reporters/memcache"
