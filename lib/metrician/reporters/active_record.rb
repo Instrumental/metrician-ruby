@@ -52,7 +52,6 @@ module Metrician
     end
 
     def parse_sql(sql)
-      puts sql
       match = sql.match(SQL_EXP)
       command = (match && match[1].downcase) || OTHER
       table = (match && match[2] && match[2].downcase)
