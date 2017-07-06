@@ -4,12 +4,12 @@ module Metrician
     initializer "metrician.load_middleware" do |app|
       next unless Metrician.configuration[:request_timing][:enabled]
 
-      require "middleware/request_timing"
-      require "middleware/application_timing"
+      require "metrician/middleware/request_timing"
+      require "metrician/middleware/application_timing"
 
-      app.middleware.insert_before(0, Metrician::RequestTiming)
-      app.middleware.insert_after(Metrician::RequestTiming, Rack::ContentLength)
-      app.middleware.use(Metrician::ApplicationTiming)
+      app.middleware.insert_before(0, Metrician::Middleware::RequestTiming)
+      app.middleware.insert_after(Metrician::Metrician::RequestTiming, Rack::ContentLength)
+      app.middleware.use(Metrician::Metrician::ApplicationTiming)
     end
 
   end
