@@ -3,12 +3,14 @@ module Metrician
 
     def self.enabled?
       !!defined?(::Delayed::Worker) &&
-        Metrician.configuration[:jobs][:enabled]
+        Metrician::Jobs.enabled?
     end
 
     def instrument
-      require "delayed_job/delayed_job_callbacks"
-      ::Delayed::Worker.plugins << ::Metrician::DelayedJobCallbacks
+      require "metrician/jobs/delayed_job_callbacks"
+      unless ::Delayed::Worker.plugins.include?(::Metrician::Jobs::DelayedJobCallbacks)
+        ::Delayed::Worker.plugins << ::Metrician::Jobs::DelayedJobCallbacks
+      end
     end
 
   end
