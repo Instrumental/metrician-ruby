@@ -57,6 +57,10 @@ RSpec.describe Metrician do
         @agent = Metrician.agent
       end
 
+      after do
+        Resque.inline = false
+      end
+
       specify "Resque is instrumented" do
         @agent.stub(:gauge)
         @agent.should_receive(:gauge).with("jobs.run", anything)
@@ -91,6 +95,10 @@ RSpec.describe Metrician do
           chain.add Metrician::Jobs::SidekiqMiddleware
         end
         @agent = Metrician.agent
+      end
+
+      after do
+        Sidekiq::Testing.disable!
       end
 
       specify "Sidekiq is instrumented" do
