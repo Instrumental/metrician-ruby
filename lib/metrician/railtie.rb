@@ -1,8 +1,8 @@
 module Metrician
   class Railtie < Rails::Railtie
 
-    initializer "metrician.load_middleware" do |app|
-      next unless Metrician.configuration[:request_timing][:enabled]
+    initializer "metrician.load_rack_middleware" do |app|
+      next unless Metrician::Middleware.enabled? #configuration[:request_timing][:enabled]
 
       require "metrician/middleware/request_timing"
       require "metrician/middleware/application_timing"
