@@ -14,10 +14,14 @@ module Metrician
       end
 
       def call(env)
-        start_time = Time.now.to_f
+        if Middleware.request_timing_required?
+          start_time = Time.now.to_f
+        end
         @app.call(env)
       ensure
-        env[ENV_REQUEST_TOTAL_TIME] ||= (Time.now.to_f - start_time)
+        if Middleware.request_timing_required?
+          env[ENV_REQUEST_TOTAL_TIME] ||= (Time.now.to_f - start_time)
+        end
       end
 
     end

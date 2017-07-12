@@ -38,9 +38,11 @@ module Metrician
               controller: env[ENV_CONTROLLER_PATH],
               path: env[ENV_REQUEST_PATH]
             )
-            if Middleware.request?
+            if Middleware.request_timing_required?
               request_time = env[ENV_REQUEST_TOTAL_TIME].to_f
               env[ENV_REQUEST_TOTAL_TIME] = nil
+            end
+            if Middleware.request?
               gauge(:request, request_time, current_route)
             end
             if Middleware.apdex?

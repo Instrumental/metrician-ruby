@@ -25,6 +25,10 @@ module Metrician
       @enabled ||= configuration[:enabled]
     end
 
+    def self.request_timing_required?
+      request? || apdex?
+    end
+
     def self.request?
       @request ||= configuration[:request][:enabled]
     end
