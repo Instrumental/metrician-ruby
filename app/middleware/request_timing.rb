@@ -37,7 +37,9 @@ module Metrician
         env["REQUEST_TOTAL_TIME"] = nil
         gauge("request", request_time, current_route)
         apdex(request_time)
-        increment("error", current_route) if status >= 500
+        Rails.logger.info("status:  #{status.inspect}")
+        Rails.logger.info("statusc: #{status.class}")
+        increment("error", current_route) if status.to_i >= 500
 
         # Note that 30xs don't have content-length, so cached
         # items will report other metrics but not this one
