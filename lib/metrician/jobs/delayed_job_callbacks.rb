@@ -18,7 +18,7 @@ module Metrician
           end
         end
 
-        lifecycle.after(:error) do |job|
+        lifecycle.after(:error) do |_worker, job|
           if Jobs.error?
             Metrician.increment(Jobs::ERROR_METRIC)
             if Jobs.job_specific?
