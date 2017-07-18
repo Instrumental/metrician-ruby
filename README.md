@@ -4,15 +4,26 @@ Automatically get metrics for [Instrumental](https://instrumentalapp.com) from y
 
 [![Build Status](https://travis-ci.org/Instrumental/metrician.svg?branch=master)](https://travis-ci.org/Instrumental/metrician)
 
-## Remodel in Progress
-
-We are actively re-writing and changing this library right now. Please understand that if you are using this right now you are probably in for some changes to both your metrics being reported and other weirdness.
-
-<img src="http://www.reconnecthdi.org/home/images/Under%20construction.png" />
-
 ## Automatic Metrics For Ruby
 
-Automatic metrics for commonly used Ruby gems like ActiveRecord, Redis, Memcached, Dalli, Delayed Job, Sidekiq, Resque, Honeybadger, and generic method tracing.
+Automatic metrics for commonly used Ruby gems:
+
+* ActiveRecord
+* Redis
+* Memcached
+* Dalli
+* Delayed Job
+* Sidekiq
+* Resque
+* Honeybadger
+
+Additionally:
+
+* apdex metrics
+* request tracking
+* generic method tracing
+
+## Installation
 
 Grab your project token from [https://instrumentalapp.com/docs/tokens](https://instrumentalapp.com/docs/tokens) and activate automatically via:
 
