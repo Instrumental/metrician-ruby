@@ -8,8 +8,8 @@ module Metrician
       require "metrician/middleware/application_timing"
 
       app.middleware.insert_before(0, Metrician::Middleware::RequestTiming)
-      app.middleware.insert_after(Metrician::Metrician::RequestTiming, Rack::ContentLength)
-      app.middleware.use(Metrician::Metrician::ApplicationTiming)
+      app.middleware.insert_after(Metrician::Middleware::RequestTiming, Rack::ContentLength)
+      app.middleware.use(Metrician::Middleware::ApplicationTiming)
     end
 
   end
