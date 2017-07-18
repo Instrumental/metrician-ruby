@@ -1,6 +1,7 @@
 require "metrician/configuration"
 require "metrician/reporter"
 require "metrician/jobs"
+require "metrician/middleware"
 require "instrumental_agent"
 require "metrician/railtie" if defined?(Rails)
 

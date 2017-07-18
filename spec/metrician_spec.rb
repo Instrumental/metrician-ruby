@@ -19,7 +19,7 @@ RSpec.describe Metrician do
     end
 
     specify "per command instrumentation" do
-      Metrician.configuration[:database][:command] = true
+      Metrician.configuration[:database][:command][:enabled] = true
       @agent.stub(:gauge)
       @agent.should_receive(:gauge).with("database.select", anything)
 
@@ -197,11 +197,11 @@ RSpec.describe Metrician do
 
     describe "success case" do
       def app
-        require "middleware/request_timing"
-        require "middleware/application_timing"
+        require "metrician/middleware/request_timing"
+        require "metrician/middleware/application_timing"
         Rack::Builder.app do
-          use Metrician::RequestTiming
-          use Metrician::ApplicationTiming
+          use Metrician::Middleware::RequestTiming
+          use Metrician::Middleware::ApplicationTiming
           run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
         end
       end
@@ -217,11 +217,11 @@ RSpec.describe Metrician do
 
     describe "error case" do
       def app
-        require "middleware/request_timing"
-        require "middleware/application_timing"
+        require "metrician/middleware/request_timing"
+        require "metrician/middleware/application_timing"
         Rack::Builder.app do
-          use Metrician::RequestTiming
-          use Metrician::ApplicationTiming
+          use Metrician::Middleware::RequestTiming
+          use Metrician::Middleware::ApplicationTiming
           run lambda { |env| [500, {'Content-Type' => 'text/plain'}, ['BOOM']] }
         end
       end
@@ -237,14 +237,35 @@ RSpec.describe Metrician do
       end
     end
 
+    describe "queueing timing" do
+      def app
+        require "metrician/middleware/request_timing"
+        require "metrician/middleware/application_timing"
+        Rack::Builder.app do
+          use Metrician::Middleware::RequestTiming
+          use Metrician::Middleware::ApplicationTiming
+          run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
+        end
+      end
+
+      specify "Queue timing is instrumented" do
+        Metrician.configuration[:request_timing][:queue_time][:enabled] = true
+        agent = Metrician.agent
+        agent.stub(:gauge)
+
+        agent.should_receive(:gauge).with("web.queue_time", anything)
+        get "/", {}, { Metrician::Middleware::ENV_QUEUE_START_KEYS.first => 1.second.ago.to_f }
+      end
+    end
+
     describe "apdex" do
       describe "fast" do
         def app
-          require "middleware/request_timing"
-          require "middleware/application_timing"
+          require "metrician/middleware/request_timing"
+          require "metrician/middleware/application_timing"
           Rack::Builder.app do
-            use Metrician::RequestTiming
-            use Metrician::ApplicationTiming
+            use Metrician::Middleware::RequestTiming
+            use Metrician::Middleware::ApplicationTiming
             # This SHOULD be fast enough to fit under our
             # default threshold of 2.5s :)
             run lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] }
@@ -265,13 +286,13 @@ RSpec.describe Metrician do
 
       describe "medium" do
         def app
-          require "middleware/request_timing"
-          require "middleware/application_timing"
+          require "metrician/middleware/request_timing"
+          require "metrician/middleware/application_timing"
           Rack::Builder.app do
-            use Metrician::RequestTiming
-            use Metrician::ApplicationTiming
+            use Metrician::Middleware::RequestTiming
+            use Metrician::Middleware::ApplicationTiming
             run ->(env) {
-              env["REQUEST_TOTAL_TIME"] = 3.0 # LOAD-BEARING
+              env[Metrician::Middleware::ENV_REQUEST_TOTAL_TIME] = 3.0 # LOAD-BEARING
               [200, {'Content-Type' => 'text/plain'}, ['OK']]
             }
           end
@@ -290,13 +311,13 @@ RSpec.describe Metrician do
 
       describe "slow" do
         def app
-          require "middleware/request_timing"
-          require "middleware/application_timing"
+          require "metrician/middleware/request_timing"
+          require "metrician/middleware/application_timing"
           Rack::Builder.app do
-            use Metrician::RequestTiming
-            use Metrician::ApplicationTiming
+            use Metrician::Middleware::RequestTiming
+            use Metrician::Middleware::ApplicationTiming
             run ->(env) {
-              env["REQUEST_TOTAL_TIME"] = 28.0 # LOAD-BEARING
+              env[Metrician::Middleware::ENV_REQUEST_TOTAL_TIME] = 28.0 # LOAD-BEARING
               [200, {'Content-Type' => 'text/plain'}, ['OK']]
             }
           end
