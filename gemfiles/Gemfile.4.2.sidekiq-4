@@ -9,6 +9,7 @@ gem 'sidekiq', '~>4.0', require: 'sidekiq/testing'
 gem 'rspec', '~> 3.4'
 
 # Development dependencies
+gem 'instrumental_agent'
 gem 'rake'
 gem 'byebug'
 gem 'gemika'

@@ -2,7 +2,6 @@ require "metrician/configuration"
 require "metrician/reporter"
 require "metrician/jobs"
 require "metrician/middleware"
-require "instrumental_agent"
 require "metrician/railtie" if defined?(Rails)
 
 module Metrician
@@ -38,10 +37,6 @@ module Metrician
 
   def self.agent
     @agent || raise(AgentNotInitialized.new)
-  end
-
-  def self.null_agent(agent_class: Instrumental::Agent)
-    @agent ||= agent_class.new(nil, enabled: false)
   end
 
   def self.logger=(logger)

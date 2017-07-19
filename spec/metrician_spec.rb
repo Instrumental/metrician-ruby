@@ -1,4 +1,11 @@
 require "spec_helper"
+require "instrumental_agent"
+
+module Metrician
+  def self.null_agent(agent_class: Instrumental::Agent)
+    self.agent = agent_class.new(nil, enabled: false)
+  end
+end
 
 RSpec.describe Metrician do
   before do
