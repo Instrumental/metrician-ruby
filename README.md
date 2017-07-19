@@ -17,41 +17,37 @@ Automatic metrics for commonly used Ruby gems:
 * Resque
 * Honeybadger
 
-Additionally:
+Request Metrics:
 
 * apdex metrics
-* request tracking
-* generic method tracing
-
-## Installation
-
-Grab your project token from [https://instrumentalapp.com/docs/tokens](https://instrumentalapp.com/docs/tokens) and activate automatically via:
-
-```
-Metrician.activate(PROJECT_TOKEN)
-```
-
-If you're already using our agent, you can initialize your Agent manually and assign it like so:
-
-```
-agent = Instrumental::Agent.new(PROJECT_TOKEN)
-Metrician.agent = agent
-Metrician.activate
-```
-
-
-## Rails Middleware
-
-We can do some neat stuff automatically in a rails app using the power of rack middleware. This will get you:
-
 * request time, broken down by controller and action
 * middleware execution time
+* idle time
 * content length
 * web server queue time (for servers that set HTTP_X_QUEUE_START like nginx)
 
-By default the middleware will be inserted into your stack automatically. If you control your middleware stack manually, you can load the functionality using the following manual instructions:
+And also you can do generic method tracing.
 
-We need to load some middleware in a specific way. In your application.rb file:
+## Installation
+
+```
+gem install metrician instrumental_agent
+```
+
+Grab your project token from [https://instrumentalapp.com/docs/tokens](https://instrumentalapp.com/docs/tokens) and activate metrician with:
+
+```
+I = Instrumental::Agent.new(PROJECT_TOKEN)
+Metrician.activate(I)
+```
+
+## Configuration
+
+### Rack Middleware
+
+In rails, the middleware will be inserted into your middleware stack automatically. If you control your middleware stack manually in rails, you can load the functionality using the following manual instructions:
+
+In your application.rb file:
 
 ```ruby
 # request timing should be first so we get the correct queue time and start the
@@ -78,3 +74,4 @@ run YOUR_APP::Application.routes
 ```
 
 Your exception tracking middleware may try to get in first (hey, Honeybadger), so you will have to change the load order in an initializer, because we want to track that as middleware time, too.
+

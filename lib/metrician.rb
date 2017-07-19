@@ -7,23 +7,41 @@ require "metrician/railtie" if defined?(Rails)
 
 module Metrician
 
-  def self.activate(api_key = nil)
-    if api_key
-      self.agent = Instrumental::Agent.new(api_key)
-    end
+  AgentNotInitialized = Class.new(StandardError)
+  MissingAgent = Class.new(ArgumentError)
+  IncompatibleAgent = Class.new(ArgumentError)
+
+  REQUIRED_AGENT_METHODS = [
+    :cleanup,
+    :gauge,
+    :increment,
+    :logger,
+    "logger=".to_sym,
+  ]
+
+  def self.activate(agent)
+    self.agent = agent
     Metrician::Reporter.all.each(&:instrument)
   end
 
-  def self.agent=(instrumental_agent)
-    @agent = instrumental_agent
+  def self.agent=(agent)
+    if agent.nil?
+      raise MissingAgent.new
+    end
+
+    REQUIRED_AGENT_METHODS.each do |method|
+      raise IncompatibleAgent.new("agent must implement #{method}") unless agent.respond_to?(method)
+    end
+
+    @agent = agent
   end
 
   def self.agent
-    @agent || null_agent
+    @agent || raise(AgentNotInitialized.new)
   end
 
-  def self.null_agent
-    @null_agent ||= Instrumental::Agent.new(nil, enabled: false)
+  def self.null_agent(agent_class: Instrumental::Agent)
+    @agent ||= agent_class.new(nil, enabled: false)
   end
 
   def self.logger=(logger)

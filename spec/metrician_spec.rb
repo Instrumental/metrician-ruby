@@ -1,14 +1,42 @@
 require "spec_helper"
 
 RSpec.describe Metrician do
+  before do
+    Metrician.instance_variable_set("@agent", nil)
+  end
+
   it "has a version number" do
     Metrician::VERSION.should_not be nil
   end
 
+  describe "Metrician.activate" do
+    it "takes an agent" do
+      # if this excepts, the world changed
+      Metrician.activate(Metrician.null_agent)
+    end
+
+    it "excepts if the agent is nil" do
+      lambda { Metrician.activate(nil) }.should raise_error(Metrician::MissingAgent)
+    end
+
+    it "excepts if the agent doesn't define one of the required agent methods" do
+      class BadAgent
+        # this list is from Metrician::REQUIRED_AGENT_METHODS
+        def cleanup; end
+        def gauge; end
+        def increment; end
+        def logger; end
+        # def logger=(value); end
+      end
+      agent = BadAgent.new
+      lambda { Metrician.activate(agent) }.should raise_error(Metrician::IncompatibleAgent)
+    end
+  end
+
   describe "ActiveRecord" do
     before do
-      Metrician.activate
-      @agent = Metrician.agent
+      @agent = Metrician.null_agent
+      Metrician.activate(@agent)
     end
 
     specify "top level queries are instrumented" do
@@ -47,8 +75,8 @@ RSpec.describe Metrician do
   describe "job systems" do
     describe "delayed_job" do
       before do
-        Metrician.activate
-        @agent = Metrician.agent
+        @agent = Metrician.null_agent
+        Metrician.activate(@agent)
       end
 
       specify "DelayedJob is instrumented" do
@@ -80,8 +108,8 @@ RSpec.describe Metrician do
     describe "resque" do
       before do
         Resque.inline = true
-        Metrician.activate
-        @agent = Metrician.agent
+        @agent = Metrician.null_agent
+        Metrician.activate(@agent)
       end
 
       after do
@@ -114,14 +142,14 @@ RSpec.describe Metrician do
     describe "sidekiq" do
       before do
         Sidekiq::Testing.inline!
-        Metrician.activate
+        @agent = Metrician.null_agent
+        Metrician.activate(@agent)
         # sidekiq doesn't use middleware by design in their testing
         # harness, so we add it just as metrician does
         # https://github.com/mperham/sidekiq/wiki/Testing#testing-server-middleware
         Sidekiq::Testing.server_middleware do |chain|
           chain.add Metrician::Jobs::SidekiqMiddleware
         end
-        @agent = Metrician.agent
       end
 
       after do
@@ -150,10 +178,9 @@ RSpec.describe Metrician do
 
   describe "cache systems" do
     specify "redis is instrumented" do
-      Metrician.activate
-
+      agent = Metrician.null_agent
+      Metrician.activate(agent)
       client = Redis.new
-      agent = Metrician.agent
       agent.stub(:gauge)
       agent.should_receive(:gauge).with("cache.command", anything)
       client.get("foo-#{rand(100_000)}")
@@ -167,8 +194,8 @@ RSpec.describe Metrician do
 
     memcached_clients.each do |client|
       specify "memcached is instrumented (#{client.class.name})" do
-        Metrician.activate
-        agent = Metrician.agent
+        agent = Metrician.null_agent
+        Metrician.activate(agent)
         agent.stub(:gauge)
 
         agent.should_receive(:gauge).with("cache.command", anything)
@@ -183,8 +210,8 @@ RSpec.describe Metrician do
 
   describe "external service timing" do
     specify "Net::HTTP is instrumented" do
-      Metrician.activate
-      agent = Metrician.agent
+      agent = Metrician.null_agent
+      Metrician.activate(agent)
       agent.stub(:gauge)
 
       agent.should_receive(:gauge).with("service.request", anything)
@@ -194,6 +221,8 @@ RSpec.describe Metrician do
 
   describe "request timing" do
     include Rack::Test::Methods
+
+    let(:agent) { Metrician.null_agent }
 
     describe "success case" do
       def app
@@ -207,7 +236,6 @@ RSpec.describe Metrician do
       end
 
       specify "Rack timing is instrumented" do
-        agent = Metrician.agent
         agent.stub(:gauge)
 
         agent.should_receive(:gauge).with("web.request", anything)
@@ -227,7 +255,6 @@ RSpec.describe Metrician do
       end
 
       specify "500s are instrumented for error tracking" do
-        agent = Metrician.agent
         agent.stub(:gauge)
         agent.stub(:increment)
 
@@ -250,7 +277,6 @@ RSpec.describe Metrician do
 
       specify "Queue timing is instrumented" do
         Metrician.configuration[:request_timing][:queue_time][:enabled] = true
-        agent = Metrician.agent
         agent.stub(:gauge)
 
         agent.should_receive(:gauge).with("web.queue_time", anything)
@@ -259,6 +285,9 @@ RSpec.describe Metrician do
     end
 
     describe "apdex" do
+
+      let(:agent) { Metrician.null_agent }
+
       describe "fast" do
         def app
           require "metrician/middleware/request_timing"
@@ -273,7 +302,6 @@ RSpec.describe Metrician do
         end
 
         specify "satisfied is recorded" do
-          agent = Metrician.agent
           agent.stub(:gauge)
 
           agent.should_receive(:gauge).with("web.apdex.satisfied", anything)
@@ -299,7 +327,6 @@ RSpec.describe Metrician do
         end
 
         specify "tolerated is recorded" do
-          agent = Metrician.agent
           agent.stub(:gauge)
 
           agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
@@ -324,7 +351,6 @@ RSpec.describe Metrician do
         end
 
         specify "frustrated is recorded" do
-          agent = Metrician.agent
           agent.stub(:gauge)
 
           agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
