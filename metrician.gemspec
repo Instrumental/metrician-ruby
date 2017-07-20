@@ -10,6 +10,9 @@ Gem::Specification.new do |s|
   s.summary     = "Automatic Application Metric Collection for Ruby Applications"
   s.description = "Automatically report the most important metrics about your ruby application, from request timing to job execution."
   s.license     = "MIT"
+  s.metadata    = {
+    "source_code_uri" => "https://github.com/Instrumental/metrician-ruby"
+  }
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
