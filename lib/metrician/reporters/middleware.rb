@@ -11,7 +11,9 @@ module Metrician
         require "metrician/middleware/application_timing"
 
         app = Rails.application
-        Rails.application.middleware.insert_before(0, Metrician::Middleware::RequestTiming)
+        return if app.nil?
+
+        app.middleware.insert_before(0, Metrician::Middleware::RequestTiming)
         app.middleware.insert_after(Metrician::Middleware::RequestTiming, Rack::ContentLength)
         app.middleware.use(Metrician::Middleware::ApplicationTiming)
       end
