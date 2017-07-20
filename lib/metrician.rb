@@ -2,7 +2,6 @@ require "metrician/configuration"
 require "metrician/reporter"
 require "metrician/jobs"
 require "metrician/middleware"
-require "metrician/railtie" if defined?(Rails)
 
 module Metrician
 
