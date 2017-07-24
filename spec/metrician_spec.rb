@@ -271,6 +271,28 @@ RSpec.describe Metrician do
       end
     end
 
+    describe "middleware exceptions" do
+      def app
+        require "metrician/middleware/request_timing"
+        require "metrician/middleware/application_timing"
+        Rack::Builder.app do
+          use Metrician::Middleware::RequestTiming
+          use Metrician::Middleware::ApplicationTiming
+          run lambda { |env| raise "boom" }
+        end
+      end
+
+      specify "middleware exceptions don't cause errors in response size tracking" do
+        Metrician.configuration[:request_timing][:response_size][:enabled] = true
+        agent.stub(:gauge)
+        agent.stub(:increment)
+
+        agent.should_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:increment).with("web.error", 1)
+        lambda { get "/" }.should raise_error(RuntimeError, "boom")
+      end
+    end
+
     describe "queueing timing" do
       def app
         require "metrician/middleware/request_timing"

@@ -51,7 +51,7 @@ module Metrician
             if Middleware.error?
               # We to_i the status because in some circumstances it is a
               # Fixnum and some it is a string. Because why not.
-              increment(:error, current_route) if status.to_i >= 500
+              increment(:error, current_route) if $! || status.to_i >= 500
             end
             if Middleware.response_size?
               # Note that 30xs don't have content-length, so cached
@@ -143,7 +143,7 @@ module Metrician
       end
 
       def self.get_response_size(headers:, body:)
-        return headers[HEADER_CONTENT_LENGTH] if headers[HEADER_CONTENT_LENGTH]
+        return headers[HEADER_CONTENT_LENGTH] if headers && headers[HEADER_CONTENT_LENGTH]
         body.first.length.to_s if body.respond_to?(:length) && body.length == 1
       end
 
