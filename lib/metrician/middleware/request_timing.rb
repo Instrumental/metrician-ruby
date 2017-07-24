@@ -51,7 +51,7 @@ module Metrician
             if Middleware.error?
               # We to_i the status because in some circumstances it is a
               # Fixnum and some it is a string. Because why not.
-              increment(:error, current_route) if $! || status.to_i >= 500
+              increment(:error, current_route) if $ERROR_INFO || status.to_i >= 500
             end
             if Middleware.response_size?
               # Note that 30xs don't have content-length, so cached
