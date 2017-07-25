@@ -27,6 +27,15 @@ RSpec.describe Metrician do
     Metrician.configuration.should == config
   end
 
+  specify "partially defined config shouldn't error" do
+    t = Tempfile.new("metrician_config")
+    t.write({request_timing: {enabled: true}}.to_yaml)
+    t.flush
+    ENV["METRICIAN_CONFIG"] = t.path
+    Metrician.reset
+    lambda { Metrician::Jobs.run? }.should_not raise_error
+  end
+
   describe "Metrician.activate" do
     it "takes an agent" do
       # if this excepts, the world changed
