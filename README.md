@@ -83,11 +83,12 @@ Your exception tracking middleware may try to get in first (hey, Honeybadger), s
 3. `script/test`
 4. Increment version in:
   - `lib/metrician/version.rb`
-5. Update [CHANGELOG.md](CHANGELOG.md)
-6. Commit "Release vX.Y.Z"
-7. Push to GitHub
-8. Release packages: `rake release`
-9. Verify package release at https://rubygems.org/gems/metrician
+5. Run `rake matrix:install` to generate new gem lockfiles
+6. Update [CHANGELOG.md](CHANGELOG.md)
+7. Commit "Release vX.Y.Z"
+8. Push to GitHub
+9. Release packages: `rake release`
+10. Verify package release at https://rubygems.org/gems/metrician
 
 
 ## Version Policy
