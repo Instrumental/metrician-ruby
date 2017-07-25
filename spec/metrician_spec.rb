@@ -10,10 +10,21 @@ end
 RSpec.describe Metrician do
   before(:each) do
     Metrician.reset
+    ENV["METRICIAN_CONFIG"] = nil
   end
 
   it "has a version number" do
     Metrician::VERSION.should_not be nil
+  end
+
+  it "can load config from ENV" do
+    config = {request_timing: {enabled: true}}
+    t = Tempfile.new("metrician_config")
+    t.write(config.to_yaml)
+    t.flush
+    ENV["METRICIAN_CONFIG"] = t.path
+    Metrician.reset
+    Metrician.configuration.should == config
   end
 
   describe "Metrician.activate" do

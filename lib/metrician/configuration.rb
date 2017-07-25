@@ -10,7 +10,7 @@ module Metrician
       if env_location
         # this should never raise unless a bad ENV setting has been set
         raise(FileMissing.new(env_location)) unless File.exist?(env_location)
-        return YAML.load(env_location)
+        return YAML.load_file(env_location)
       end
 
       if File.exist?(app_location)
