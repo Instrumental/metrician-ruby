@@ -127,9 +127,6 @@ RSpec.describe Metrician do
         @agent.stub(:gauge)
         @agent.should_receive(:gauge).with("jobs.run", anything)
 
-        # typically Metrician would be loaded in an initalizer
-        # and this _extend_ could be done inside the job itself, but here
-        # we are in a weird situation.
         Resque::Job.create(:default, TestResqueJob, { "success" => true })
       end
 
@@ -137,9 +134,6 @@ RSpec.describe Metrician do
         @agent.stub(:increment)
         @agent.should_receive(:increment).with("jobs.error", 1)
 
-        # typically Metrician would be loaded in an initalizer
-        # and this _extend_ could be done inside the job itself, but here
-        # we are in a weird situation.
         lambda { Resque::Job.create(:default, TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
       end
     end
