@@ -130,8 +130,7 @@ RSpec.describe Metrician do
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
         # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
-        Resque.enqueue(TestResqueJob, { "success" => true })
+        Resque::Job.create(:default, TestResqueJob, { "success" => true })
       end
 
       specify "job errors are instrumented" do
@@ -141,8 +140,7 @@ RSpec.describe Metrician do
         # typically Metrician would be loaded in an initalizer
         # and this _extend_ could be done inside the job itself, but here
         # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
-        lambda { Resque.enqueue(TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
+        lambda { Resque::Job.create(:default, TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
       end
     end
 
