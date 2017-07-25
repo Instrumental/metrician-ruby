@@ -261,6 +261,17 @@ RSpec.describe Metrician do
         agent.should_receive(:increment).with("web.error", 1)
         get "/"
       end
+
+      specify "500s are instrumented for error tracking without request tracking" do
+        Metrician.configuration[:request_timing][:request][:enabled] = false
+        Metrician.configuration[:request_timing][:error][:enabled] = true
+        agent.stub(:gauge)
+        agent.stub(:increment)
+
+        agent.should_not_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:increment).with("web.error", 1)
+        get "/"
+      end
     end
 
     describe "middleware exceptions" do

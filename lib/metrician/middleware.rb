@@ -34,7 +34,7 @@ module Metrician
     end
 
     def self.error?
-      @request ||= configuration[:error][:enabled]
+      @error ||= configuration[:error][:enabled]
     end
 
     def self.idle?
