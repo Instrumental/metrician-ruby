@@ -62,7 +62,7 @@ RSpec.describe Metrician do
     end
 
     specify "per table instrumentation" do
-      Metrician.configuration[:database][:table] = true
+      Metrician.configuration[:database][:table][:enabled] = true
       @agent.stub(:gauge)
       @agent.should_receive(:gauge).with("database.users", anything)
 
@@ -70,8 +70,8 @@ RSpec.describe Metrician do
     end
 
     specify "per command and table instrumentation" do
-      Metrician.configuration[:database][:command] = true
-      Metrician.configuration[:database][:table] = true
+      Metrician.configuration[:database][:command][:enabled] = true
+      Metrician.configuration[:database][:table][:enabled] = true
       @agent.stub(:gauge)
       @agent.should_receive(:gauge).with("database.select.users", anything)
 
