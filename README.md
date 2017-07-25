@@ -75,3 +75,21 @@ run YOUR_APP::Application.routes
 
 Your exception tracking middleware may try to get in first (hey, Honeybadger), so you will have to change the load order in an initializer, because we want to track that as middleware time, too.
 
+
+## Release Process
+
+1. Pull latest master
+2. Merge feature branch(es) into master
+3. `script/test`
+4. Increment version in:
+  - `lib/metrician/version.rb`
+5. Update [CHANGELOG.md](CHANGELOG.md)
+6. Commit "Release vX.Y.Z"
+7. Push to GitHub
+8. Release packages: `rake release`
+9. Verify package release at https://rubygems.org/gems/metrician
+
+
+## Version Policy
+
+This library follows [Semantic Versioning 2.0.0](http://semver.org).
