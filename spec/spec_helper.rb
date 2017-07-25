@@ -5,7 +5,7 @@ Bundler.require(:default)
 require "metrician"
 require "gemika"
 require "byebug"
-
+require "pp"
 
 Dir["#{File.dirname(__FILE__)}/support/*.rb"].sort.each {|f| require f}
 

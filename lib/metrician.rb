@@ -78,4 +78,12 @@ module Metrician
   def self.configuration
     @configuration ||= Metrician::Configuration.load
   end
+
+  def self.reset
+    %i[@agent @configuration].each do |memo_ivar|
+      if Metrician.instance_variable_defined?(memo_ivar)
+        Metrician.remove_instance_variable(memo_ivar)
+      end
+    end
+  end
 end

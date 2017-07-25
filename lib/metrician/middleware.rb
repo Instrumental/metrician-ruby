@@ -60,5 +60,14 @@ module Metrician
     def self.apdex?
       @apdex ||= configuration[:apdex][:enabled]
     end
+
+    def self.reset
+      %w[@configuration @enabled @request @error @idle @response_size @middleware @queue_time @route_tracking @apdex].each do |memo_ivar|
+        if instance_variable_defined?(memo_ivar)
+          remove_instance_variable(memo_ivar)
+        end
+      end
+    end
+
   end
 end

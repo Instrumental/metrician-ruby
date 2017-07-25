@@ -8,8 +8,8 @@ module Metrician
 end
 
 RSpec.describe Metrician do
-  before do
-    Metrician.instance_variable_set("@agent", nil)
+  before(:each) do
+    Metrician.reset
   end
 
   it "has a version number" do

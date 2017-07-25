@@ -5,6 +5,8 @@ module Metrician
     FileMissing = Class.new(StandardError)
 
     def self.load
+      reset_dependents
+
       if env_location
         # this should never raise unless a bad ENV setting has been set
         raise(FileMissing.new(env_location)) unless File.exist?(env_location)
@@ -28,6 +30,11 @@ module Metrician
 
     def self.gem_location
       File.expand_path("../../../config/metrician.yaml", __FILE__)
+    end
+
+    def self.reset_dependents
+      Metrician::Jobs.reset
+      Metrician::Middleware.reset
     end
   end
 end

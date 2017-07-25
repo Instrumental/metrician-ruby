@@ -28,5 +28,13 @@ module Metrician
       job_name.gsub(/[^\w]+/, ".").gsub(/\.+$/, "")
     end
 
+    def self.reset
+      %i[@configuration @enabled @run @error @job_specific].each do |memo_ivar|
+        if instance_variable_defined?(memo_ivar)
+          remove_instance_variable(memo_ivar)
+        end
+      end
+    end
+
   end
 end
