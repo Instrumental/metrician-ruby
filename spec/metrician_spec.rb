@@ -18,13 +18,13 @@ RSpec.describe Metrician do
   end
 
   it "can load config from ENV" do
-    config = {request_timing: {enabled: true}}
+    config = {request_timing: {enabled: "test value"}}
     t = Tempfile.new("metrician_config")
     t.write(config.to_yaml)
     t.flush
     ENV["METRICIAN_CONFIG"] = t.path
     Metrician.reset
-    Metrician.configuration.should == config
+    Metrician.configuration[:request_timing][:enabled].should == "test value"
   end
 
   specify "partially defined config shouldn't error" do
