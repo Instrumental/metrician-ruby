@@ -43,7 +43,7 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
 
   gem list -i gemika >/dev/null || gem install gemika
 
-  rake matrix:install
+  rake -t matrix:install
 done
 
 if ! psql postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'metrician_test'" | grep -q 1; then
