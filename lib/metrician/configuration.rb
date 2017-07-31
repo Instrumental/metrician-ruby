@@ -46,7 +46,7 @@ module Metrician
     end
 
     def self.gem_location
-      File.expand_path("../../../config/metrician.yaml", __FILE__)
+      File.expand_path("../../../metrician.defaults.yaml", __FILE__)
     end
 
     def self.reset_dependents
