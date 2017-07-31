@@ -8,11 +8,7 @@ module Metrician
       reset_dependents
 
       config = {}
-      [
-        env_location,
-        app_location,
-        gem_location,
-      ].compact.each do |location|
+      config_locations.each do |location|
         config = merge(config, YAML.load_file(location)) if File.exist?(location)
       end
       config
@@ -32,6 +28,10 @@ module Metrician
       new_config
     end
 
+    def self.config_locations
+      [env_location, *app_locations, gem_location].compact
+    end
+
     def self.env_location
       path = ENV["METRICIAN_CONFIG"]
       if path && !File.exist?(path)
@@ -41,8 +41,11 @@ module Metrician
       path
     end
 
-    def self.app_location
-      File.join(Dir.pwd, "config", "metrician.yaml")
+    def self.app_locations
+      [
+        File.join(Dir.pwd, "config", "metrician.yaml"),
+        File.join(Dir.pwd, "config", "metrician.yml"),
+      ]
     end
 
     def self.gem_location
