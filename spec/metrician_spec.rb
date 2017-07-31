@@ -10,7 +10,7 @@ end
 RSpec.describe Metrician do
   before(:each) do
     Metrician.reset
-    ENV["METRICIAN_CONFIG"] = nil
+    ENV.delete("METRICIAN_CONFIG")
   end
 
   it "has a version number" do
