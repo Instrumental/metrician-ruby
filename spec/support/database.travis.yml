@@ -1,6 +1,6 @@
 mysql:
   database: metrician_test
-  username: travis
+  username: root
   password:
 
 postgresql:
