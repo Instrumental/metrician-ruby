@@ -133,4 +133,4 @@
 
   # hook into Module with add_metrician_method_tracer added as a base
   # feature of every ruby object
-  :enabled: true
+  :enabled: false
