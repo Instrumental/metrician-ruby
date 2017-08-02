@@ -65,6 +65,10 @@
   :table:
     :enabled: false
 
+  # collect query information about the command issued and table executed against
+  :command_and_table:
+    :enabled: false
+
 
 # "external_service" settings control reporting metrics when Net::HTTP
 # is used to make requests
