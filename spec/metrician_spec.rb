@@ -126,22 +126,14 @@ RSpec.describe Metrician do
         @agent.stub(:gauge)
         @agent.should_receive(:gauge).with("jobs.run", anything)
 
-        # typically Metrician would be loaded in an initalizer
-        # and this _extend_ could be done inside the job itself, but here
-        # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
-        Resque.enqueue(TestResqueJob, { "success" => true })
+        Resque::Job.create(:default, TestResqueJob, { "success" => true })
       end
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
         @agent.should_receive(:increment).with("jobs.error", 1)
 
-        # typically Metrician would be loaded in an initalizer
-        # and this _extend_ could be done inside the job itself, but here
-        # we are in a weird situation.
-        TestResqueJob.send(:extend, Metrician::Jobs::ResquePlugin)
-        lambda { Resque.enqueue(TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
+        lambda { Resque::Job.create(:default, TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
       end
     end
 
@@ -265,6 +257,17 @@ RSpec.describe Metrician do
         agent.stub(:increment)
 
         agent.should_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:increment).with("web.error", 1)
+        get "/"
+      end
+
+      specify "500s are instrumented for error tracking without request tracking" do
+        Metrician.configuration[:request_timing][:request][:enabled] = false
+        Metrician.configuration[:request_timing][:error][:enabled] = true
+        agent.stub(:gauge)
+        agent.stub(:increment)
+
+        agent.should_not_receive(:gauge).with("web.request", anything)
         agent.should_receive(:increment).with("web.error", 1)
         get "/"
       end

@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    metrician (0.0.4)
+    metrician (0.0.6)
 
 GEM
   remote: https://rubygems.org/

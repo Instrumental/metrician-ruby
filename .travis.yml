@@ -17,7 +17,7 @@ matrix:
     - gemfile: gemfiles/Gemfile.5.0.pg
       rvm: 2.1.5
 
-before_script:
+before_install:
   - psql -c 'create database metrician_test;' -U postgres
   - mysql -e 'create database IF NOT EXISTS metrician_test;'
 
