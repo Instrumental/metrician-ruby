@@ -1,6 +1,6 @@
 require 'simplecov'
 SimpleCov.start
-SimpleCov.use_merging false
+SimpleCov.command_name "#{RUBY_VERSION}_#{File.basename(ENV["BUNDLE_GEMFILE"])}"
 SimpleCov.minimum_coverage 90
 SimpleCov.refuse_coverage_drop
 
