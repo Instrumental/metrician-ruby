@@ -37,11 +37,11 @@ module Metrician
       config = Metrician.configuration[:database]
       metrics = []
       metrics << "database.query" if config[:query][:enabled]
-      if config[:command][:enabled] || config[:table][:enabled]
+      if [:command, :table, :command_and_table].any?{ |key| config[key][:enabled] }
         command, table = parse_sql(sql)
         metrics << "database.#{command}" if config[:command][:enabled] && command
         metrics << "database.#{table}" if config[:table][:enabled] && table
-        metrics << "database.#{command}.#{table}" if config[:command][:enabled] && config[:table] && command && table
+        metrics << "database.#{command}.#{table}" if config[:command_and_table][:enabled] && command && table
       end
       begin
         log_without_metrician(*args, &block)
