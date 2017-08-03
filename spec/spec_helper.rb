@@ -1,3 +1,9 @@
+require 'simplecov'
+SimpleCov.start
+SimpleCov.use_merging false
+SimpleCov.minimum_coverage 90
+SimpleCov.refuse_coverage_drop
+
 ENV["RAILS_ENV"] = "test"
 
 require "bundler/setup"

@@ -19,6 +19,7 @@ gem 'resque'
 gem 'redis'
 gem 'memcached'
 gem 'rack-test'
+gem 'simplecov', :require => false, :group => :test
 
 # Gem under test
 gem 'metrician', :path => '..'
