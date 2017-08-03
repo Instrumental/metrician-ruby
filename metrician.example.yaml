@@ -1,0 +1,136 @@
+# A configuration for Metrician that controls the features of its
+# automated metric reporting
+
+---
+
+# # "request_timing" settings control the features of the Request Timing Rack Middleware
+:request_timing:
+#   # hook into Rack middleware for request timing
+#   :enabled: true
+
+#   # collect basic request timing for every request
+#   :request:
+#     :enabled: true
+
+#   # report 5xx codes as errors
+#   :error:
+#     :enabled: true
+
+#   # report time between requests in a server process as idle time
+#   :idle:
+#     :enabled: false
+
+#   # report the payload size of requests
+#   :response_size:
+#     :enabled: false
+
+#   # report the amount of time spent on middleware per request
+#   :middleware:
+#     :enabled: false
+
+#   # report the amount of time a request spent queued at the web layer
+#   # before hitting Rack
+#   :queue_time:
+#     :enabled: false
+
+#   # report the controller, action, and verb for every request
+#   :route_tracking:
+#     :enabled: false
+
+#   # "apdex" controls the recording of metrics to measure apdex
+#   # More here: https://en.wikipedia.org/wiki/Apdex
+#   # Note this requires "request" tracking to be enabled
+#   :apdex:
+#     :enabled: true
+
+#     # set the threshold (seconds), above which a request is no longer
+#     # considered "sasifactory". The "tolerates" threshold will be
+#     # 4x this number.
+#     :satisfied_threshold: 2.5
+
+# # "database" settings control ActiveRecord metric reporting features
+:database:
+#   # hook into ActiveRecord for db call timing
+#   :enabled: true
+
+#   # collect basic query tracking for every query
+#   :query:
+#     :enabled: true
+
+#   # collect generic sql query information (select, update, insert, etc.)
+#   :command:
+#     :enabled: false
+
+#   # collect query information for specific tables
+#   :table:
+#     :enabled: false
+
+
+# # "external_service" settings control reporting metrics when Net::HTTP
+# # is used to make requests
+:external_service:
+#   # hook into Net::HTTP to record timing metrics
+#   :enabled: true
+
+#   # collect basic external request timing information
+#   :request:
+#     :enabled: true
+
+
+# # "jobs" settings control reporting metrics when ruby job systems
+# # work through their queues
+:jobs:
+
+#   # hook into job system middleware when presence detected
+#   :enabled: true
+
+#   # record the basic timing of every job
+#   :run:
+#     :enabled: true
+
+#   # record when an error occurs in the a job
+#   :error:
+#     :enabled: true
+
+#   # record metrics for each kind of job that is worked from the queue
+#   :job_specific:
+#     :enabled: false
+
+# # "cache" settings control timing of commands to services often used as
+# # application caches like memcached and redis
+:cache:
+
+#   # hook into caching libraries
+#   :enabled: true
+
+#   # record aggregate timing information for all cache commands
+#   :command:
+#     :enabled: true
+
+#   # record the timing of each command as its own metric
+#   :command_specific:
+#     :enabled: false
+
+
+# # "exception" settings control reporting when exceptions are caught
+# # by an exception tracker in your application
+:exception:
+
+#   # hook into exception tracking libraries
+#   :enabled: false
+
+#   # report when an exception is raised and caught by an exception tracker
+#   :raise:
+#     :enabled: true
+
+#   # report a metric per exception type raised
+#   :exception_specific:
+#     :enabled: false
+
+# # "method_tracing" settings control hooking into Module and allowing
+# # ruby methods to be timed
+:method_tracer:
+
+#   # hook into Module with add_metrician_method_tracer added as a base
+#   # feature of every ruby object
+#   :enabled: true
