@@ -1,3 +1,10 @@
+### 0.0.7 [August 3, 2017]
+* Allow partial config files
+* Officially require Ruby 2
+* Add separate DB command and table configs
+* Don't add method tracing function by default
+* Add example config file
+
 ### 0.0.6 [July 25, 2017]
 * Fix edge case in web error tracking
 
