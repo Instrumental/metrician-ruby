@@ -412,5 +412,25 @@ RSpec.describe Metrician do
       end
 
     end
+
+    describe "rails" do
+      def app
+        Rails.application
+      end
+
+      let(:agent) { Metrician.null_agent }
+
+      before do
+        Metrician.activate(agent)
+      end
+
+      it "hooks into rails automatically" do
+        agent.stub(:gauge)
+        agent.should_receive(:gauge).with("web.request", anything)
+
+        get "/"
+        last_response.body.should == "foobar response"
+      end
+    end
   end
 end
