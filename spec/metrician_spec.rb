@@ -60,6 +60,51 @@ RSpec.describe Metrician do
     end
   end
 
+  describe "exception tracking" do
+    before do
+      Metrician.configuration[:exception][:enabled] = true
+      Honeybadger.configure do |config|
+        config.disabled = true
+      end
+      @agent = Metrician.null_agent
+      Metrician.activate(@agent)
+    end
+
+    describe "honeybadger" do
+      specify "exceptions are instrumented" do
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("exception.raise", 1)
+        Honeybadger.notify('Something went wrong.', {
+          error_class: 'MyClass',
+          context: {my_data: 'value'}
+        })
+      end
+
+      specify "exceptions are instrumented (job specific, string)" do
+        Metrician.configuration[:exception][:exception_specific][:enabled] = true
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("exception.raise.string", 1)
+        Honeybadger.notify('Something went wrong.', {
+          error_class: 'MyClass',
+          context: {my_data: 'value'}
+        })
+      end
+
+      specify "exceptions are instrumented (job specific, exception)" do
+        Metrician.configuration[:exception][:exception_specific][:enabled] = true
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("exception.raise.runtime_error", 1)
+        begin
+          fail 'badgers!'
+        rescue => exception
+          Honeybadger.notify(exception, context: {
+            my_data: 'value'
+          })
+        end
+      end
+    end
+  end
+
   describe "ActiveRecord" do
     before do
       @agent = Metrician.null_agent
