@@ -236,6 +236,26 @@ RSpec.describe Metrician do
         # worker bits at latest possible time
         lambda { TestSidekiqWorker.perform_async({ "error" => true}) }.should raise_error(StandardError)
       end
+
+      specify "per job instrumentation" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:gauge)
+
+        @agent.should_receive(:gauge).with("jobs.run.job.TestSidekiqWorker", anything)
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        TestSidekiqWorker.perform_async({ "success" => true})
+      end
+
+      specify "job errors are instrumented per job" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("jobs.error.job.TestSidekiqWorker", 1)
+
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        lambda { TestSidekiqWorker.perform_async({ "error" => true}) }.should raise_error(StandardError)
+      end
     end
   end
 
