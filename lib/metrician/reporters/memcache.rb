@@ -28,7 +28,7 @@ module Metrician
       return if client_class.method_defined?(:get_with_metrician_trace)
       METHODS.each do |method_name|
         next unless client_class.method_defined?(method_name)
-        client_class.class_eval <<-EOD
+        client_class.class_eval <<-RUBY
           def #{method_name}_with_metrician_trace(*args, &blk)
             start_time = Time.now
             begin
@@ -41,7 +41,7 @@ module Metrician
           end
           alias #{method_name}_without_metrician_trace #{method_name}
           alias #{method_name} #{method_name}_with_metrician_trace
-        EOD
+        RUBY
       end
     end
 
