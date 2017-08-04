@@ -11,12 +11,11 @@ module Metrician
       !!defined?(::Dalli) && !!defined?(::Dalli::Client)
     end
 
-    def client_class
-      if self.class.memcached_gem?
-        Memcached
-      elsif self.class.dalli_gem?
-        Dalli::Client
-      end
+    def client_classes
+      [
+        self.class.memcached_gem? && Memcached,
+        self.class.dalli_gem? && Dalli::Client,
+      ].compact
     end
 
     def self.enabled?
@@ -25,6 +24,12 @@ module Metrician
     end
 
     def instrument
+      client_classes.each do |client_class|
+        instrument_class(client_class)
+      end
+    end
+
+    def instrument_class(client_class)
       return if client_class.method_defined?(:get_with_metrician_trace)
       METHODS.each do |method_name|
         next unless client_class.method_defined?(method_name)

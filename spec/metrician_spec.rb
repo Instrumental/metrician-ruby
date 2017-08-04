@@ -270,10 +270,9 @@ RSpec.describe Metrician do
     end
 
     memcached_clients = [
-      defined?(::Memcached) && ::Memcached.new("localhost:11211"),
-      defined?(::Dalli::Client) && ::Dalli::Client.new("localhost:11211"),
-    ].compact
-    raise "no memcached client" if memcached_clients.empty?
+      ::Memcached.new("localhost:11211"),
+      ::Dalli::Client.new("localhost:11211"),
+    ]
 
     memcached_clients.each do |client|
       specify "memcached is instrumented (#{client.class.name})" do

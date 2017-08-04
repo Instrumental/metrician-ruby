@@ -18,6 +18,7 @@ gem 'delayed_job_active_record'
 gem 'resque'
 gem 'redis'
 gem 'dalli'
+gem 'memcached'
 gem 'rack-test'
 gem 'simplecov', :require => false, :group => :test
 gem 'honeybadger'
