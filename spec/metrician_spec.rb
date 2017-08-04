@@ -73,7 +73,7 @@ RSpec.describe Metrician do
     describe "honeybadger" do
       specify "exceptions are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("exception.raise", 1)
+        @agent.should_receive(:increment).with("app.tracked_exception", 1)
         Honeybadger.notify('Something went wrong.', {
           error_class: 'MyClass',
           context: {my_data: 'value'}
@@ -83,7 +83,7 @@ RSpec.describe Metrician do
       specify "exceptions are instrumented (job specific, string)" do
         Metrician.configuration[:exception][:exception_specific][:enabled] = true
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("exception.raise.string", 1)
+        @agent.should_receive(:increment).with("app.tracked_exception.string", 1)
         Honeybadger.notify('Something went wrong.', {
           error_class: 'MyClass',
           context: {my_data: 'value'}
@@ -93,7 +93,7 @@ RSpec.describe Metrician do
       specify "exceptions are instrumented (job specific, exception)" do
         Metrician.configuration[:exception][:exception_specific][:enabled] = true
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("exception.raise.runtime_error", 1)
+        @agent.should_receive(:increment).with("app.tracked_exception.runtime_error", 1)
         begin
           fail 'badgers!'
         rescue => exception
@@ -113,7 +113,7 @@ RSpec.describe Metrician do
 
     specify "top level queries are instrumented" do
       @agent.stub(:gauge)
-      @agent.should_receive(:gauge).with("database.query", anything)
+      @agent.should_receive(:gauge).with("app.database.query", anything)
 
       User.where(name: "foobar").to_a
     end
@@ -121,7 +121,7 @@ RSpec.describe Metrician do
     specify "per command instrumentation" do
       Metrician.configuration[:database][:command][:enabled] = true
       @agent.stub(:gauge)
-      @agent.should_receive(:gauge).with("database.select", anything)
+      @agent.should_receive(:gauge).with("app.database.select", anything)
 
       User.where(name: "foobar").to_a
     end
@@ -129,7 +129,7 @@ RSpec.describe Metrician do
     specify "per table instrumentation" do
       Metrician.configuration[:database][:table][:enabled] = true
       @agent.stub(:gauge)
-      @agent.should_receive(:gauge).with("database.users", anything)
+      @agent.should_receive(:gauge).with("app.database.users", anything)
 
       User.where(name: "foobar").to_a
     end
@@ -137,7 +137,7 @@ RSpec.describe Metrician do
     specify "per command and table instrumentation" do
       Metrician.configuration[:database][:command_and_table][:enabled] = true
       @agent.stub(:gauge)
-      @agent.should_receive(:gauge).with("database.select.users", anything)
+      @agent.should_receive(:gauge).with("app.database.select.users", anything)
 
       User.where(name: "foobar").to_a
     end
@@ -153,7 +153,7 @@ RSpec.describe Metrician do
       specify "DelayedJob is instrumented" do
         @agent.stub(:gauge)
 
-        @agent.should_receive(:gauge).with("jobs.run", anything)
+        @agent.should_receive(:gauge).with("app.jobs.run", anything)
         Delayed::Job.enqueue(TestDelayedJob.new(success: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
@@ -161,7 +161,7 @@ RSpec.describe Metrician do
       specify "job errors are instrumented" do
         @agent.stub(:increment)
 
-        @agent.should_receive(:increment).with("jobs.error", 1)
+        @agent.should_receive(:increment).with("app.jobs.error", 1)
         Delayed::Job.enqueue(TestDelayedJob.new(error: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
@@ -170,7 +170,7 @@ RSpec.describe Metrician do
         Metrician.configuration[:jobs][:job_specific][:enabled] = true
         @agent.stub(:gauge)
 
-        @agent.should_receive(:gauge).with("jobs.run.job.TestDelayedJob", anything)
+        @agent.should_receive(:gauge).with("app.jobs.run.job.TestDelayedJob", anything)
         Delayed::Job.enqueue(TestDelayedJob.new(success: true))
         Delayed::Worker.new(exit_on_complete: true).start
       end
@@ -189,14 +189,14 @@ RSpec.describe Metrician do
 
       specify "Resque is instrumented" do
         @agent.stub(:gauge)
-        @agent.should_receive(:gauge).with("jobs.run", anything)
+        @agent.should_receive(:gauge).with("app.jobs.run", anything)
 
         Resque::Job.create(:default, TestResqueJob, { "success" => true })
       end
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("jobs.error", 1)
+        @agent.should_receive(:increment).with("app.jobs.error", 1)
 
         lambda { Resque::Job.create(:default, TestResqueJob, { "error" => true }) }.should raise_error(StandardError)
       end
@@ -221,7 +221,7 @@ RSpec.describe Metrician do
 
       specify "Sidekiq is instrumented" do
         @agent.stub(:gauge)
-        @agent.should_receive(:gauge).with("jobs.run", anything)
+        @agent.should_receive(:gauge).with("app.jobs.run", anything)
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
@@ -230,7 +230,7 @@ RSpec.describe Metrician do
 
       specify "job errors are instrumented" do
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("jobs.error", 1)
+        @agent.should_receive(:increment).with("app.jobs.error", 1)
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
@@ -241,7 +241,7 @@ RSpec.describe Metrician do
         Metrician.configuration[:jobs][:job_specific][:enabled] = true
         @agent.stub(:gauge)
 
-        @agent.should_receive(:gauge).with("jobs.run.job.TestSidekiqWorker", anything)
+        @agent.should_receive(:gauge).with("app.jobs.run.job.TestSidekiqWorker", anything)
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
         TestSidekiqWorker.perform_async({ "success" => true})
@@ -250,7 +250,7 @@ RSpec.describe Metrician do
       specify "job errors are instrumented per job" do
         Metrician.configuration[:jobs][:job_specific][:enabled] = true
         @agent.stub(:increment)
-        @agent.should_receive(:increment).with("jobs.error.job.TestSidekiqWorker", 1)
+        @agent.should_receive(:increment).with("app.jobs.error.job.TestSidekiqWorker", 1)
 
         # avoid load order error of sidekiq here by just including the
         # worker bits at latest possible time
@@ -265,7 +265,7 @@ RSpec.describe Metrician do
       Metrician.activate(agent)
       client = Redis.new
       agent.stub(:gauge)
-      agent.should_receive(:gauge).with("cache.command", anything)
+      agent.should_receive(:gauge).with("app.cache.command", anything)
       client.get("foo-#{rand(100_000)}")
     end
 
@@ -280,7 +280,7 @@ RSpec.describe Metrician do
         Metrician.activate(agent)
         agent.stub(:gauge)
 
-        agent.should_receive(:gauge).with("cache.command", anything)
+        agent.should_receive(:gauge).with("app.cache.command", anything)
         begin
           client.get("foo-#{rand(100_000)}")
         rescue Memcached::NotFound
@@ -296,7 +296,7 @@ RSpec.describe Metrician do
       Metrician.activate(agent)
       agent.stub(:gauge)
 
-      agent.should_receive(:gauge).with("service.request", anything)
+      agent.should_receive(:gauge).with("app.outgoing_request", anything)
       Net::HTTP.get(URI.parse("http://example.com/"))
     end
   end
@@ -320,7 +320,7 @@ RSpec.describe Metrician do
       specify "Rack timing is instrumented" do
         agent.stub(:gauge)
 
-        agent.should_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:gauge).with("app.web.request", anything)
         get "/"
       end
     end
@@ -340,8 +340,8 @@ RSpec.describe Metrician do
         agent.stub(:gauge)
         agent.stub(:increment)
 
-        agent.should_receive(:gauge).with("web.request", anything)
-        agent.should_receive(:increment).with("web.error", 1)
+        agent.should_receive(:gauge).with("app.web.request", anything)
+        agent.should_receive(:increment).with("app.web.error", 1)
         get "/"
       end
 
@@ -351,8 +351,8 @@ RSpec.describe Metrician do
         agent.stub(:gauge)
         agent.stub(:increment)
 
-        agent.should_not_receive(:gauge).with("web.request", anything)
-        agent.should_receive(:increment).with("web.error", 1)
+        agent.should_not_receive(:gauge).with("app.web.request", anything)
+        agent.should_receive(:increment).with("app.web.error", 1)
         get "/"
       end
     end
@@ -373,8 +373,8 @@ RSpec.describe Metrician do
         agent.stub(:gauge)
         agent.stub(:increment)
 
-        agent.should_receive(:gauge).with("web.request", anything)
-        agent.should_receive(:increment).with("web.error", 1)
+        agent.should_receive(:gauge).with("app.web.request", anything)
+        agent.should_receive(:increment).with("app.web.error", 1)
         lambda { get "/" }.should raise_error(RuntimeError, "boom")
       end
     end
@@ -394,7 +394,7 @@ RSpec.describe Metrician do
         Metrician.configuration[:request_timing][:queue_time][:enabled] = true
         agent.stub(:gauge)
 
-        agent.should_receive(:gauge).with("web.queue_time", anything)
+        agent.should_receive(:gauge).with("app.web.queue_time", anything)
         get "/", {}, { Metrician::Middleware::ENV_QUEUE_START_KEYS.first => 1.second.ago.to_f }
       end
     end
@@ -490,7 +490,7 @@ RSpec.describe Metrician do
 
       it "hooks into rails automatically" do
         agent.stub(:gauge)
-        agent.should_receive(:gauge).with("web.request", anything)
+        agent.should_receive(:gauge).with("app.web.request", anything)
 
         get "/"
         last_response.body.should == "foobar response"

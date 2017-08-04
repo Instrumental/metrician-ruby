@@ -3,6 +3,8 @@ require "net/http"
 module Metrician
   class NetHttp < Reporter
 
+    REQUEST_METRIC = "app.outgoing_request"
+
     def self.enabled?
       !!defined?(Net::HTTP) &&
         Metrician.configuration[:external_service][:enabled]
@@ -16,7 +18,7 @@ module Metrician
           begin
             request_without_metrician_trace(req, body, &block)
           ensure
-            Metrician.gauge("service.request", (Time.now - start_time).to_f) if Metrician.configuration[:external_service][:request][:enabled]
+            Metrician.gauge(REQUEST_METRIC, (Time.now - start_time).to_f) if Metrician.configuration[:external_service][:request][:enabled]
           end
         end
         alias_method :request_without_metrician_trace, :request

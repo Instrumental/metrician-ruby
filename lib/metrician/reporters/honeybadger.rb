@@ -1,6 +1,8 @@
 module Metrician
   class Honeybadger < Reporter
 
+    EXCEPTION_METRIC = "app.tracked_exception"
+
     def self.enabled?
       !!defined?(::Honeybadger) &&
         Metrician.configuration[:exception][:enabled]
@@ -15,9 +17,9 @@ module Metrician
           #   context_manager.get_rack_env
           notify_without_metrician(exception, options)
         ensure
-          Metrician.increment("exception.raise") if Metrician.configuration[:exception][:raise][:enabled]
+          Metrician.increment(EXCEPTION_METRIC) if Metrician.configuration[:exception][:raise][:enabled]
           # TODO: underscore is rails only
-          Metrician.increment("exception.raise.#{Metrician.dotify(exception.class.name.underscore)}") if exception && Metrician.configuration[:exception][:exception_specific][:enabled]
+          Metrician.increment("#{EXCEPTION_METRIC}.#{Metrician.dotify(exception.class.name.underscore)}") if exception && Metrician.configuration[:exception][:exception_specific][:enabled]
         end
         alias_method :notify_without_metrician, :notify
         alias_method :notify, :notify_with_metrician

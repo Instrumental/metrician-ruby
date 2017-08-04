@@ -9,6 +9,8 @@ module Metrician
     # middleware).
     class RequestTiming
 
+      WEB_METRIC = "app.web".freeze
+
       def initialize(app)
         @app = app
       end
@@ -73,16 +75,16 @@ module Metrician
       end
 
       def gauge(kind, value, route = nil)
-        Metrician.gauge("web.#{kind}", value)
+        Metrician.gauge("#{WEB_METRIC}.#{kind}", value)
         if route && Middleware.route_tracking?
-          Metrician.gauge("web.#{kind}.#{route}", value)
+          Metrician.gauge("#{WEB_METRIC}.#{kind}.#{route}", value)
         end
       end
 
       def increment(kind, route = nil)
-        Metrician.increment("web.#{kind}")
+        Metrician.increment("#{WEB_METRIC}.#{kind}")
         if route && Middleware.route_tracking?
-          Metrician.increment("web.#{kind}.#{route}")
+          Metrician.increment("#{WEB_METRIC}.#{kind}.#{route}")
         end
       end
 

@@ -17,9 +17,10 @@ module Metrician
 
   module QueryInterceptor
 
-    COMMAND_EXP = /^(select|update|insert|delete|show|begin|commit|rollback|describe)/i
-    SQL_EXP     = /#{COMMAND_EXP} (?:into |from |.+? from )?(?:[`"]([a-z_]+)[`"])?/i
-    OTHER       = "other".freeze
+    COMMAND_EXP  = /^(select|update|insert|delete|show|begin|commit|rollback|describe)/i
+    SQL_EXP      = /#{COMMAND_EXP} (?:into |from |.+? from )?(?:[`"]([a-z_]+)[`"])?/i
+    OTHER        = "other".freeze
+    QUERY_METRIC = "app.database.query"
 
     def self.included(instrumented_class)
       return if instrumented_class.method_defined?(:log_without_metrician)
@@ -36,12 +37,12 @@ module Metrician
       sql = sql.dup.force_encoding(Encoding::BINARY)
       config = Metrician.configuration[:database]
       metrics = []
-      metrics << "database.query" if config[:query][:enabled]
+      metrics << QUERY_METRIC if config[:query][:enabled]
       if [:command, :table, :command_and_table].any?{ |key| config[key][:enabled] }
         command, table = parse_sql(sql)
-        metrics << "database.#{command}" if config[:command][:enabled] && command
-        metrics << "database.#{table}" if config[:table][:enabled] && table
-        metrics << "database.#{command}.#{table}" if config[:command_and_table][:enabled] && command && table
+        metrics << "app.database.#{command}" if config[:command][:enabled] && command
+        metrics << "app.database.#{table}" if config[:table][:enabled] && table
+        metrics << "app.database.#{command}.#{table}" if config[:command_and_table][:enabled] && command && table
       end
       begin
         log_without_metrician(*args, &block)
