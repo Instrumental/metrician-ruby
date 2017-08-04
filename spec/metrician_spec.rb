@@ -480,7 +480,7 @@ RSpec.describe Metrician do
 
     describe "rails" do
       def app
-        Rails.application
+        TestRailsApp.instance
       end
 
       let(:agent) { Metrician.null_agent }
