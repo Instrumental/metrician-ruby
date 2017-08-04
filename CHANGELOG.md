@@ -1,3 +1,6 @@
+### 0.0.8 [August 4, 2017]
+* Integrate with memcached and dalli if both are available
+
 ### 0.0.7 [August 3, 2017]
 * Allow partial config files
 * Officially require Ruby 2
