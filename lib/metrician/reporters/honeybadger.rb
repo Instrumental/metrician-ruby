@@ -1,7 +1,7 @@
 module Metrician
   class Honeybadger < Reporter
 
-    EXCEPTION_METRIC = "app.tracked_exception"
+    EXCEPTION_METRIC = "tracked_exception"
 
     def self.enabled?
       !!defined?(::Honeybadger) &&

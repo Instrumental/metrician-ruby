@@ -9,7 +9,7 @@ module Metrician
     # middleware).
     class RequestTiming
 
-      WEB_METRIC = "app.web".freeze
+      WEB_METRIC = "web".freeze
 
       def initialize(app)
         @app = app

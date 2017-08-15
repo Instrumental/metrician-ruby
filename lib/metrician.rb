@@ -17,6 +17,7 @@ module Metrician
     :logger,
     "logger=".to_sym,
   ]
+  DEFAULT_PREFIX = "app.".freeze
 
   def self.activate(agent)
     self.agent = agent
@@ -53,12 +54,13 @@ module Metrician
 
   # TODO: consider removal/movement to Instrumental Agent
   def self.prefix=(prefix)
+    @prefixed = nil
     @prefix = prefix.to_s[-1] == "." ? prefix.to_s : "#{prefix}."
   end
 
   # TODO: consider removal/movement to Instrumental Agent
   def self.prefix
-    @prefix || ""
+    @prefix || DEFAULT_PREFIX
   end
 
   # TODO: consider removal/movement to Instrumental Agent

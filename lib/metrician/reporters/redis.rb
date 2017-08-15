@@ -1,7 +1,7 @@
 module Metrician
   class Redis < Reporter
 
-    CACHE_METRIC = "app.cache.command".freeze
+    CACHE_METRIC = "cache.command".freeze
 
     def self.enabled?
       !!defined?(::Redis) &&

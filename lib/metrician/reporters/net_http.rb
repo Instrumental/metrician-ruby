@@ -3,7 +3,7 @@ require "net/http"
 module Metrician
   class NetHttp < Reporter
 
-    REQUEST_METRIC = "app.outgoing_request"
+    REQUEST_METRIC = "outgoing_request"
 
     def self.enabled?
       !!defined?(Net::HTTP) &&

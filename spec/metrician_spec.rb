@@ -419,9 +419,9 @@ RSpec.describe Metrician do
         specify "satisfied is recorded" do
           agent.stub(:gauge)
 
-          agent.should_receive(:gauge).with("web.apdex.satisfied", anything)
-          agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
-          agent.should_not_receive(:gauge).with("web.apdex.frustrated", anything)
+          agent.should_receive(:gauge).with("app.web.apdex.satisfied", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.tolerated", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.frustrated", anything)
           get "/"
         end
 
@@ -444,9 +444,9 @@ RSpec.describe Metrician do
         specify "tolerated is recorded" do
           agent.stub(:gauge)
 
-          agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
-          agent.should_receive(:gauge).with("web.apdex.tolerated", anything)
-          agent.should_not_receive(:gauge).with("web.apdex.frustrated", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.satisfied", anything)
+          agent.should_receive(:gauge).with("app.web.apdex.tolerated", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.frustrated", anything)
           get "/"
         end
       end
@@ -468,9 +468,9 @@ RSpec.describe Metrician do
         specify "frustrated is recorded" do
           agent.stub(:gauge)
 
-          agent.should_not_receive(:gauge).with("web.apdex.satisfied", anything)
-          agent.should_not_receive(:gauge).with("web.apdex.tolerated", anything)
-          agent.should_receive(:gauge).with("web.apdex.frustrated", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.satisfied", anything)
+          agent.should_not_receive(:gauge).with("app.web.apdex.tolerated", anything)
+          agent.should_receive(:gauge).with("app.web.apdex.frustrated", anything)
           get "/"
         end
       end

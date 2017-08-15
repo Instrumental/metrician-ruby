@@ -1,7 +1,7 @@
 module Metrician
   class Memcache < Reporter
 
-    CACHE_METRIC = "app.cache.command".freeze
+    CACHE_METRIC = "cache.command".freeze
     METHODS = %i[get delete cas prepend append replace decrement increment add set].freeze
 
     def self.memcached_gem?

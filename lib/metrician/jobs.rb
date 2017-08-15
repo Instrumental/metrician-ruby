@@ -1,8 +1,8 @@
 module Metrician
   module Jobs
 
-    RUN_METRIC   = "app.jobs.run".freeze
-    ERROR_METRIC = "app.jobs.error".freeze
+    RUN_METRIC   = "jobs.run".freeze
+    ERROR_METRIC = "jobs.error".freeze
 
     def self.configuration
       @configuration ||= Metrician.configuration[:jobs]
