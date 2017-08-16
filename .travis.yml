@@ -11,6 +11,7 @@ rvm:
 gemfile:
   - gemfiles/Gemfile.4.2.sidekiq-4
   - gemfiles/Gemfile.5.0.pg
+  - gemfiles/Gemfile.dalli_not_memcached
 
 matrix:
   exclude:

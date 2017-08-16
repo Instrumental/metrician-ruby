@@ -270,9 +270,9 @@ RSpec.describe Metrician do
     end
 
     memcached_clients = [
-      ::Memcached.new("localhost:11211"),
+      Gemika::Env.gem?('memcached') ? ::Memcached.new("localhost:11211") : nil, # allow testing only one for Gemfile.dalli_not_memcached
       ::Dalli::Client.new("localhost:11211"),
-    ]
+    ].compact
 
     memcached_clients.each do |client|
       specify "memcached is instrumented (#{client.class.name})" do
@@ -283,7 +283,8 @@ RSpec.describe Metrician do
         agent.should_receive(:gauge).with("app.cache.command", anything)
         begin
           client.get("foo-#{rand(100_000)}")
-        rescue Memcached::NotFound
+        rescue => ex
+          raise unless ex.class.name == "Memcached::NotFound"
           # memcached raises this when there is no value for "foo-N" set
         end
       end

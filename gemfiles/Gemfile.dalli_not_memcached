@@ -1,0 +1,26 @@
+source 'https://rubygems.org'
+
+# Runtime dependencies
+gem 'rails', '~>4.2.0'
+
+# Differentiated development dependencies
+gem 'mysql2', '= 0.3.17'
+gem 'sidekiq', '~>4.0', require: 'sidekiq/testing'
+gem 'rspec', '~> 3.4'
+
+# Development dependencies
+gem 'instrumental_agent'
+gem 'rake'
+gem 'byebug'
+gem 'gemika'
+gem 'database_cleaner'
+gem 'delayed_job_active_record'
+gem 'resque'
+gem 'redis'
+gem 'dalli', '~>2.6'
+gem 'rack-test'
+gem 'simplecov', :require => false, :group => :test
+gem 'honeybadger'
+
+# Gem under test
+gem 'metrician', :path => '..'

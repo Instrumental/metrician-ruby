@@ -16,7 +16,7 @@ module Metrician
       [
         self.class.memcached_gem? && Memcached,
         self.class.dalli_gem? && Dalli::Client,
-      ].compact
+      ].select{|x| x}
     end
 
     def self.enabled?
