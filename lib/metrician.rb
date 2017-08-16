@@ -52,18 +52,15 @@ module Metrician
     klass.to_s.underscore.gsub(%r{/}, ".")
   end
 
-  # TODO: consider removal/movement to Instrumental Agent
   def self.prefix=(prefix)
     @prefixed = nil
     @prefix = prefix.to_s[-1] == "." ? prefix.to_s : "#{prefix}."
   end
 
-  # TODO: consider removal/movement to Instrumental Agent
   def self.prefix
     @prefix || DEFAULT_PREFIX
   end
 
-  # TODO: consider removal/movement to Instrumental Agent
   def self.prefixed?
     @prefixed ||= !prefix.empty?
   end
