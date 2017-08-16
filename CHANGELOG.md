@@ -1,3 +1,6 @@
+### 0.0.9 [August 16, 2017]
+* Rename some metrics and add common prefix
+
 ### 0.0.8 [August 4, 2017]
 * Integrate with memcached and dalli if both are available
 
