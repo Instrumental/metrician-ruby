@@ -58,7 +58,7 @@ module Metrician
   end
 
   def self.prefix
-    @prefix || DEFAULT_PREFIX
+    @prefix ||= DEFAULT_PREFIX
   end
 
   def self.prefixed?
