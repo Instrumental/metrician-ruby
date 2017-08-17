@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = %w[lib app]
 
+  s.add_runtime_dependency("activesupport", "> 0")
+
   s.add_development_dependency("instrumental_agent", "~> 0")
   s.add_development_dependency("rubocop", "~> 0")
   s.add_development_dependency("bundler", "~> 1.14")
