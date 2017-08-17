@@ -13,10 +13,10 @@ module Metrician
     end
 
     def client_classes
-      [
-        self.class.memcached_gem? && Memcached,
-        self.class.dalli_gem? && Dalli::Client,
-      ].select{|x| x}
+      classes = []
+      classes << Memcached if self.class.memcached_gem?
+      classes << Dalli::Client if self.class.dalli_gem?
+      classes
     end
 
     def self.enabled?
