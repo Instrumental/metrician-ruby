@@ -2,7 +2,7 @@
 
 Automatically get metrics for [Instrumental](https://instrumentalapp.com) from your Ruby on Rails (RoR) application.
 
-[![Build Status](https://travis-ci.org/Instrumental/metrician.svg?branch=master)](https://travis-ci.org/Instrumental/metrician)
+[![Build Status](https://travis-ci.org/Instrumental/metrician-ruby.svg?branch=master)](https://travis-ci.org/Instrumental/metrician-ruby)
 
 ## Automatic Metrics For Ruby
 
