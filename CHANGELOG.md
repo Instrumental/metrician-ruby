@@ -1,3 +1,6 @@
+### 0.0.10 [August 17, 2017]
+* Fix issue with cache lib detection
+
 ### 0.0.9 [August 16, 2017]
 * Rename some metrics and add common prefix
 
