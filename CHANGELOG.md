@@ -1,3 +1,6 @@
+### 0.0.11 [August 18, 2017]
+* Remove dependence on ActiveSupport
+
 ### 0.0.10 [August 17, 2017]
 * Fix issue with cache lib detection
 
