@@ -1,8 +1,6 @@
 require 'simplecov'
 SimpleCov.start
 SimpleCov.command_name "#{RUBY_VERSION}_#{File.basename(ENV["BUNDLE_GEMFILE"])}"
-SimpleCov.minimum_coverage 90
-SimpleCov.refuse_coverage_drop
 
 ENV["RAILS_ENV"] = "test"
 

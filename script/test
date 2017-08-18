@@ -19,6 +19,14 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
   } || success="false"
 done
 
+minimum_coverage="90"
+if ! bundle exec ruby -e "require 'simplecov'; exit SimpleCov::LastRun.read['result']['covered_percent'] >= ${minimum_coverage}"; then
+  success="false"
+  echo
+  echo "Coverage fell below minimum of ${minimum_coverage}:"
+  cat coverage/.last_run.json
+fi
+
 if [ $success == "true" ]; then
   tput bold    # bold text
   tput setaf 2 # green text
