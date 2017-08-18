@@ -9,7 +9,7 @@ module Metrician
 
       config = {}
       config_locations.reverse.each do |location|
-        deep_merge!(config, YAML.load_file(location)) if File.exist?(location)
+        config.deep_merge!(YAML.load_file(location)) if File.exist?(location)
       end
       config
     end
@@ -41,25 +41,6 @@ module Metrician
     def self.reset_dependents
       Metrician::Jobs.reset
       Metrician::Middleware.reset
-    end
-
-    def self.deep_merge!(this_hash, other_hash, &block)
-      return this_hash unless other_hash
-      other_hash.each_pair do |current_key, other_value|
-        this_value = this_hash[current_key]
-
-        this_hash[current_key] = if this_value.is_a?(Hash) && other_value.is_a?(Hash)
-          this_value.deep_merge(other_value, &block)
-        else
-          if block_given? && this_hash.key?(current_key)
-            block.call(current_key, this_value, other_value)
-          else
-            other_value
-          end
-        end
-      end
-
-      this_hash
     end
   end
 end

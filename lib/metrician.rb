@@ -1,4 +1,5 @@
 require "English"
+require "metrician/core_ext"
 require "metrician/configuration"
 require "metrician/reporter"
 require "metrician/jobs"

@@ -1,2 +1,4 @@
-class User < ActiveRecord::Base
+if Gemika::Env.gem?('activerecord')
+  class User < ActiveRecord::Base
+  end
 end

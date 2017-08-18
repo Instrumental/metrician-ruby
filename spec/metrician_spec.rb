@@ -7,6 +7,12 @@ module Metrician
   end
 end
 
+def should_skip?(gem_name)
+  unless Gemika::Env.gem?(gem_name)
+    "Skipping tests because gem '#{gem_name}' isn't loaded. Make sure this is correct for the current Gemfile."
+  end
+end
+
 RSpec.describe Metrician do
   before(:each) do
     Metrician.reset
@@ -63,14 +69,17 @@ RSpec.describe Metrician do
   describe "exception tracking" do
     before do
       Metrician.configuration[:exception][:enabled] = true
-      Honeybadger.configure do |config|
-        config.disabled = true
-      end
       @agent = Metrician.null_agent
       Metrician.activate(@agent)
     end
 
-    describe "honeybadger" do
+    describe "honeybadger", skip: should_skip?('honeybadger') do
+      before do
+        Honeybadger.configure do |config|
+          config.disabled = true
+        end
+      end
+
       specify "exceptions are instrumented" do
         @agent.stub(:increment)
         @agent.should_receive(:increment).with("app.tracked_exception", 1)
@@ -105,7 +114,7 @@ RSpec.describe Metrician do
     end
   end
 
-  describe "ActiveRecord" do
+  describe "ActiveRecord", skip: should_skip?('activerecord') do
     before do
       @agent = Metrician.null_agent
       Metrician.activate(@agent)
@@ -144,7 +153,7 @@ RSpec.describe Metrician do
   end
 
   describe "job systems" do
-    describe "delayed_job" do
+    describe "delayed_job", skip: should_skip?('delayed_job') do
       before do
         @agent = Metrician.null_agent
         Metrician.activate(@agent)
@@ -176,7 +185,7 @@ RSpec.describe Metrician do
       end
     end
 
-    describe "resque" do
+    describe "resque", skip: should_skip?('resque') do
       before do
         Resque.inline = true
         @agent = Metrician.null_agent
@@ -202,7 +211,7 @@ RSpec.describe Metrician do
       end
     end
 
-    describe "sidekiq" do
+    describe "sidekiq", skip: should_skip?('sidekiq') do
       before do
         Sidekiq::Testing.inline!
         @agent = Metrician.null_agent
@@ -260,7 +269,7 @@ RSpec.describe Metrician do
   end
 
   describe "cache systems" do
-    specify "redis is instrumented" do
+    specify "redis is instrumented", skip: should_skip?('redis') do
       agent = Metrician.null_agent
       Metrician.activate(agent)
       client = Redis.new
@@ -269,13 +278,8 @@ RSpec.describe Metrician do
       client.get("foo-#{rand(100_000)}")
     end
 
-    memcached_clients = [
-      Gemika::Env.gem?('memcached') ? ::Memcached.new("localhost:11211") : nil, # allow testing only one for Gemfile.dalli_not_memcached
-      ::Dalli::Client.new("localhost:11211"),
-    ].compact
-
-    memcached_clients.each do |client|
-      specify "memcached is instrumented (#{client.class.name})" do
+    shared_examples "memcache libs" do
+      it "is instrumented" do
         agent = Metrician.null_agent
         Metrician.activate(agent)
         agent.stub(:gauge)
@@ -288,6 +292,16 @@ RSpec.describe Metrician do
           # memcached raises this when there is no value for "foo-N" set
         end
       end
+    end
+
+    describe "memcached gem", skip: should_skip?('memcached') do
+      let(:client) { ::Memcached.new("localhost:11211") }
+      it_behaves_like "memcache libs"
+    end
+
+    describe "dalli gem", skip: should_skip?('dalli') do
+      let(:client) { ::Dalli::Client.new("localhost:11211") }
+      it_behaves_like "memcache libs"
     end
   end
 
@@ -302,8 +316,8 @@ RSpec.describe Metrician do
     end
   end
 
-  describe "request timing" do
-    include Rack::Test::Methods
+  describe "request timing", skip: should_skip?('rack') do
+    include Rack::Test::Methods if Gemika::Env.gem?('rack')
 
     let(:agent) { Metrician.null_agent }
 
