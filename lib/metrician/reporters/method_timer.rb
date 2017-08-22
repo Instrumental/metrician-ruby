@@ -23,7 +23,7 @@ module Metrician
     def self.timeable_method?(klass, method_name)
       klass.method_defined?(method_name) ||
         klass.private_method_defined?(method_name) ||
-        klass.methods.include?(method_name.to_s)
+        klass.methods.include?(method_name)
     end
 
     def self.already_timed_method?(klass, is_klass_method, timed_name)
@@ -52,7 +52,7 @@ module Metrician
     def add_metrician_method_timer(method_name, metric_name = nil)
       return false unless TimingMethodInterceptor.timeable_method?(self, method_name)
 
-      is_klass_method = methods.include?(method_name.to_s)
+      is_klass_method = methods.include?(method_name)
       timed_name = "with_metrician_time_#{method_name}"
       return false if TimingMethodInterceptor.already_timed_method?(self, is_klass_method, timed_name)
 

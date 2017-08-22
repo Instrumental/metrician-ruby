@@ -67,6 +67,33 @@ RSpec.describe Metrician do
     end
   end
 
+  describe "method timing" do
+    before do
+      Metrician.configuration[:method_timer][:enabled] = true
+      @agent = Metrician.null_agent
+      Metrician.activate(@agent)
+    end
+
+    let(:test_instance) do
+      class TestClass
+        def instance_it; end
+        add_metrician_method_timer :instance_it
+
+        def self.class_it; end
+        add_metrician_method_timer :class_it
+      end
+      TestClass.new
+    end
+
+    specify "instance method timings are reported" do
+      @agent.stub(:gauge)
+      @agent.should_receive(:gauge).with("app.timer.test_class.instance_it", anything)
+      test_instance.instance_it
+      @agent.should_receive(:gauge).with("app.timer.test_class.self.class_it", anything)
+      test_instance.class.class_it
+    end
+  end
+
   describe "exception tracking" do
     before do
       Metrician.configuration[:exception][:enabled] = true
