@@ -31,22 +31,22 @@ module Metrician
     end
 
     def instrument_class(client_class)
-      return if client_class.method_defined?(:get_with_metrician_trace)
+      return if client_class.method_defined?(:get_with_metrician_time)
       METHODS.each do |method_name|
         next unless client_class.method_defined?(method_name)
         client_class.class_eval <<-RUBY
-          def #{method_name}_with_metrician_trace(*args, &blk)
+          def #{method_name}_with_metrician_time(*args, &blk)
             start_time = Time.now
             begin
-              #{method_name}_without_metrician_trace(*args, &blk)
+              #{method_name}_without_metrician_time(*args, &blk)
             ensure
               duration = (Time.now - start_time).to_f
               Metrician.gauge(::Metrician::Memcache::CACHE_METRIC, duration) if Metrician.configuration[:cache][:command][:enabled]
               Metrician.gauge("#{::Metrician::Memcache::CACHE_METRIC}.#{method_name}", duration) if Metrician.configuration[:cache][:command_specific][:enabled]
             end
           end
-          alias #{method_name}_without_metrician_trace #{method_name}
-          alias #{method_name} #{method_name}_with_metrician_trace
+          alias #{method_name}_without_metrician_time #{method_name}
+          alias #{method_name} #{method_name}_with_metrician_time
         RUBY
       end
     end
