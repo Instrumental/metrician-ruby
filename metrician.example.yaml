@@ -127,10 +127,10 @@
 #   :exception_specific:
 #     :enabled: false
 
-# # "method_tracing" settings control hooking into Module and allowing
+# # "method_timer" settings control hooking into Module and allowing
 # # ruby methods to be timed
-:method_tracer:
+:method_timer:
 
-#   # hook into Module with add_metrician_method_tracer added as a base
+#   # hook into Module with add_metrician_method_timer added as a base
 #   # feature of every ruby object
 #   :enabled: true
