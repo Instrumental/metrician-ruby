@@ -1,3 +1,6 @@
+### 0.1.0 [September 5, 2017]
+* **BREAKING** Rename Method Tracing -> Method Timing to reflect reality better. Metrics go from `tracer.<stuff>` to `timer.<stuff>`.
+
 ### 0.0.11 [August 18, 2017]
 * Remove dependence on ActiveSupport
 
