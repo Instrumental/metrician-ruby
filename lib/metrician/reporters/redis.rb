@@ -9,12 +9,12 @@ module Metrician
     end
 
     def instrument
-      return if ::Redis::Client.method_defined?(:call_with_metrician_trace)
+      return if ::Redis::Client.method_defined?(:call_with_metrician_time)
       ::Redis::Client.class_eval do
-        def call_with_metrician_trace(*args, &blk)
+        def call_with_metrician_time(*args, &blk)
           start_time = Time.now
           begin
-            call_without_metrician_trace(*args, &blk)
+            call_without_metrician_time(*args, &blk)
           ensure
             duration = (Time.now - start_time).to_f
             Metrician.gauge(CACHE_METRIC, duration) if Metrician.configuration[:cache][:command][:enabled]
@@ -24,8 +24,8 @@ module Metrician
             end
           end
         end
-        alias_method :call_without_metrician_trace, :call
-        alias_method :call, :call_with_metrician_trace
+        alias_method :call_without_metrician_time, :call
+        alias_method :call, :call_with_metrician_time
       end
     end
 

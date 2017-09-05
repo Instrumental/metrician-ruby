@@ -26,7 +26,7 @@ Request Metrics:
 * content length
 * web server queue time (for servers that set HTTP_X_QUEUE_START like nginx)
 
-And also you can do generic method tracing.
+And also you can report generic method timing.
 
 ## Installation
 

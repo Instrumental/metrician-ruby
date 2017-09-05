@@ -11,18 +11,18 @@ module Metrician
     end
 
     def instrument
-      return if ::Net::HTTP.method_defined?(:request_with_metrician_trace)
+      return if ::Net::HTTP.method_defined?(:request_with_metrician_time)
       ::Net::HTTP.class_eval do
-        def request_with_metrician_trace(req, body = nil, &block)
+        def request_with_metrician_time(req, body = nil, &block)
           start_time = Time.now
           begin
-            request_without_metrician_trace(req, body, &block)
+            request_without_metrician_time(req, body, &block)
           ensure
             Metrician.gauge(REQUEST_METRIC, (Time.now - start_time).to_f) if Metrician.configuration[:external_service][:request][:enabled]
           end
         end
-        alias_method :request_without_metrician_trace, :request
-        alias_method :request, :request_with_metrician_trace
+        alias_method :request_without_metrician_time, :request
+        alias_method :request, :request_with_metrician_time
       end
     end
 
