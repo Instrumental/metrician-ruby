@@ -1,6 +1,5 @@
 sudo: false
 language: ruby
-before_install: gem install bundler -v 1.14.1
 
 rvm:
   - 2.1.5
@@ -20,6 +19,7 @@ matrix:
       rvm: 2.1.5
 
 before_install:
+  - gem update bundler
   - psql -c 'create database metrician_test;' -U postgres
   - mysql -e 'create database IF NOT EXISTS metrician_test;'
 
