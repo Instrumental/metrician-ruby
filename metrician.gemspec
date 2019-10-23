@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.metadata    = {
     "source_code_uri" => "https://github.com/Instrumental/metrician-ruby"
   }
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.4.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

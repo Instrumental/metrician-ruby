@@ -2,10 +2,9 @@ sudo: false
 language: ruby
 
 rvm:
-  - 2.1.5
-  - 2.2.3
-  - 2.3.0
   - 2.4.0
+  - 2.5.0
+  - 2.6.0
 
 gemfile:
   - gemfiles/Gemfile.4.2.sidekiq-4

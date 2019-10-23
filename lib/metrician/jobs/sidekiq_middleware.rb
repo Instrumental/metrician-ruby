@@ -5,7 +5,7 @@ module Metrician
       def call(worker, _msg, _queue)
         start = Time.now
         yield
-      rescue
+      rescue Exception => e
         if Jobs.error?
           Metrician.increment(Jobs::ERROR_METRIC)
           if Jobs.job_specific?

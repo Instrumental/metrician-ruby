@@ -4,7 +4,12 @@ if Gemika::Env.gem?('sidekiq')
 
     def perform(options = {})
       return if options["success"]
-      raise "suck it nerd" if options["error"]
+      if options["error"]
+        raise "suck it nerd"
+      elsif options["exception"]
+        raise Exception.new("you have poor exception handling habits")
+      end
+        
     end
   end
 end

@@ -1,3 +1,6 @@
+### 0.2.0 [October 23, 2019]
+* Sidekiq jobs now submit error data for all exceptions, including Exception, and not just those descending from StandardError
+
 ### 0.1.0 [September 5, 2017]
 * **BREAKING** Rename Method Tracing -> Method Timing to reflect reality better. Metrics go from `tracer.<stuff>` to `timer.<stuff>`.
 

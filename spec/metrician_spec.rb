@@ -293,6 +293,27 @@ RSpec.describe Metrician do
         # worker bits at latest possible time
         lambda { TestSidekiqWorker.perform_async({ "error" => true}) }.should raise_error(StandardError)
       end
+
+      specify "job errors are instrumented even if the user uses Exception instead of StandardError" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("app.jobs.error", 1)
+
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        lambda { TestSidekiqWorker.perform_async({ "exception" => true }) }.should raise_error(Exception)
+      end
+      
+      specify "job errors are instrumented per job even if the user uses Exception instead of StandardError" do
+        Metrician.configuration[:jobs][:job_specific][:enabled] = true
+        @agent.stub(:increment)
+        @agent.should_receive(:increment).with("app.jobs.error.job.TestSidekiqWorker", 1)
+
+        # avoid load order error of sidekiq here by just including the
+        # worker bits at latest possible time
+        lambda { TestSidekiqWorker.perform_async({ "exception" => true }) }.should raise_error(Exception)
+      end
+      
     end
   end
 
