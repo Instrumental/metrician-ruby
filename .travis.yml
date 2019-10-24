@@ -19,6 +19,7 @@ matrix:
 
 before_install:
   - gem update bundler
+  - gem install bundler --version 1.17.3
   - psql -c 'create database metrician_test;' -U postgres
   - mysql -e 'create database IF NOT EXISTS metrician_test;'
 
