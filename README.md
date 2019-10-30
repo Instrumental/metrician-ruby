@@ -79,7 +79,8 @@ Your exception tracking middleware may try to get in first (hey, Honeybadger), s
 ## Release Process
 
 1. Pull latest master
-2. Merge feature branch(es) into master
+1. Merge feature branch(es) into master
+1. Verify all ruby/rails/gem testing versions are up-to-date
 3. `script/test`
 4. Increment version in:
   - `lib/metrician/version.rb`
@@ -89,6 +90,21 @@ Your exception tracking middleware may try to get in first (hey, Honeybadger), s
 8. Push to GitHub
 9. Release packages: `rake release`
 10. Verify package release at https://rubygems.org/gems/metrician
+
+## Verify/Add/Update gems
+If you're adding support for a new gem or there's a new version of an already supported gem, these steps are for you.
+
+1. add new ruby versions to .travis.yml
+1. remove unsupported ruby versions from .travis.yml
+1. add new rails versions to script/generate
+1. remove unsupported versions of rails from script/generate
+1. remove gemfiles for those versions of rails from gemfiles directory
+1. remove bundler 1.x references from script/setup and .travis.yml if no longer required
+1. review tests for removed gem versions and check for vestigial code (i.e. disabled vs. report_data for honeybadger)
+1. add new gem(s) to each gem group in script/generate
+1. run script/generate
+1. run script/setup
+1. run script/test
 
 
 ## Version Policy
