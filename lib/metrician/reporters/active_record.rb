@@ -23,7 +23,24 @@ module Metrician
     QUERY_METRIC = "database.query"
 
     def self.included(instrumented_class)
-      return if instrumented_class.method_defined?(:log_without_metrician)
+      # You might wonder why this exception-based flow control is here instead of
+      # something more sane like
+      # instrumented_class.method_defined?(:log_without_metrician)
+      # The answer is that method_defined?, methods, instance_methods
+      # and other reasonable ways of answering this question do not
+      # work correctly in this circumstance.  They return false even
+      # when log_without_metrician is defined on the class.  The
+      # result is that the guard statement fails and runs this code
+      # twice.  That makes log_without_metrician an alias of
+      # log_with_metrician and causes infinite recursion :(
+      already_defined = true
+      begin
+        already_defined = instrumented_class.new(nil).method(:log_without_metrician)
+      rescue
+        already_defined = false
+      end
+
+      return if already_defined
       instrumented_class.class_eval do
         alias_method :log_without_metrician, :log
         alias_method :log, :log_with_metrician

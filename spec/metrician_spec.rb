@@ -104,7 +104,13 @@ RSpec.describe Metrician do
     describe "honeybadger", skip: should_skip?('honeybadger') do
       before do
         Honeybadger.configure do |config|
-          config.disabled = true
+          # For some reason, the config.respond_to? returns true for all values
+          # so here's some terrible exception-based flow control.
+          begin
+            config.disabled = true # versions 3.3.1 or older
+          rescue
+            config.report_data = false
+          end
         end
       end
 
@@ -241,6 +247,7 @@ RSpec.describe Metrician do
 
     describe "sidekiq", skip: should_skip?('sidekiq') do
       before do
+        require 'sidekiq/testing'
         Sidekiq::Testing.inline!
         @agent = Metrician.null_agent
         Metrician.activate(@agent)

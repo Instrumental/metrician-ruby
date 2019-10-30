@@ -1,0 +1,24 @@
+source 'https://rubygems.org'
+ 
+# Runtime dependencies
+gem 'rails', '~>6.0.0'
+ 
+# Supported Gems
+gem 'dalli'
+gem 'delayed_job_active_record'
+gem 'honeybadger'
+gem 'pg'
+gem 'redis'
+gem 'resque'
+gem 'sidekiq'
+# Development Gems
+gem 'instrumental_agent'
+gem 'rake'
+gem 'byebug'
+gem 'gemika'
+gem 'database_cleaner'
+gem 'rack-test'
+gem 'simplecov'
+gem 'rspec'
+# Gem under test
+gem 'metrician', :path => '..'

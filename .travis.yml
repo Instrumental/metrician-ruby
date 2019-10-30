@@ -11,14 +11,23 @@ gemfile:
   - gemfiles/Gemfile.5.0.pg
   - gemfiles/Gemfile.dalli_not_memcached
   - gemfiles/Gemfile.minimal
+  - gemfiles/Gemfile.rails_5.1.3.memcache_not_dalli
+  - gemfiles/Gemfile.rails_5.1.3.dalli_not_memcache
+  - gemfiles/Gemfile.rails_5.2.0.memcache_not_dalli
+  - gemfiles/Gemfile.rails_5.2.0.dalli_not_memcache
+  - gemfiles/Gemfile.rails_6.0.0.memcache_not_dalli
+  - gemfiles/Gemfile.rails_6.0.0.dalli_not_memcache
 
 matrix:
   exclude:
-    - gemfile: gemfiles/Gemfile.5.0.pg
-      rvm: 2.1.5
+    - gemfile: gemfiles/Gemfile.rails_6.0.0.memcache_not_dalli
+      rvm: 2.4.0
+    - gemfile: gemfiles/Gemfile.rails_6.0.0.dalli_not_memcache
+      rvm: 2.4.0
+      
 
 before_install:
-  - gem update bundler
+  - gem install bundler --version 2.0.2
   - gem install bundler --version 1.17.3
   - psql -c 'create database metrician_test;' -U postgres
   - mysql -e 'create database IF NOT EXISTS metrician_test;'

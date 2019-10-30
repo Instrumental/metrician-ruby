@@ -40,7 +40,8 @@ for ruby_version in `ruby -ryaml -e 'puts YAML.load(File.read(".travis.yml"))["r
   rbenv versions --bare | grep "^${ruby_version}$" || rbenv install $ruby_version
   rbenv shell $ruby_version
 
-  gem list -i bundler >/dev/null || gem install bundler
+  # WARNING: If you change the versions here, make sure to change .travis.yml
+  gem list -i bundler --version 2.0.2 >/dev/null || gem install bundler --version 2.0.2
   # Remove this when the gem lock files are all updated to use Bundler 2.0
   # See https://stackoverflow.com/questions/54087856/cant-find-gem-bundler-0-a-with-executable-bundle-gemgemnotfoundexceptio/54088849#54088849
   gem list -i bundler --version 1.17.3 >/dev/null || gem install bundler --version 1.17.3
