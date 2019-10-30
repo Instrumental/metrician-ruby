@@ -15,7 +15,7 @@ brew list mysql > /dev/null 2>&1 || (
 
 brew list postgresql > /dev/null 2>&1 || brew install postgresql
 
-#TODO - ADD MEMCACHE IT IS REQUIRED
+brew list memcached > /dev/null 2>&1 || brew install memcached
 
 rbenv which ruby >/dev/null 2>&1 || (brew upgrade ruby-build || true; rbenv install)
 
